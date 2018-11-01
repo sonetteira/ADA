@@ -2,16 +2,7 @@
      include 'dbconn.php';
  
      $conn = OpenCon();
-     $dataPoints = array(
-        array("x" => new dateTime("9/19/2018 12:15"), "y" => 22.31),
-        array("x" => new dateTime("9/19/2018 12:00"), "y" => 22.3),
-        array("x" => new dateTime("9/19/2018 11:45"), "y" => 22.25),
-        array("x" => new dateTime("9/19/2018 11:30"), "y" => 22.25),
-        array("x" => new dateTime("9/19/2018 11:15"), "y" => 22.22),
-        array("x" => new dateTime("9/19/2018 11:00"), "y" => 22.22),
-        array("x" => new dateTime("9/19/2018 10:45"), "y" => 22.04)
-        
-     );
+     
      /*$dataPoints = array(
         array("x" => 1, "y" => 1),
         array("x" => 2, "y" => 2),
@@ -19,19 +10,21 @@
         array("x" => 4, "y" => 4),
         array("x" => 10, "y" => 13),
      );*/
-    /*$dataPoints = array();
-    $sql = "SELECT TimeStamp, Temp FROM `Table 1`";
+    $dataPoints = array();
+    $sql = "SELECT TimeStamp, Temp FROM `Table 1` LIMIT 500";
     
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
         while($row = $result->fetch_assoc()) {
             if($row['Temp'])
-            $dataPoints[] = array("x" => $row['TimeStamp'], "y" => $row['Temp']);
-            
+            if($row['Temp'] < 100) {
+                $t = new DateTime($row['TimeStamp']);
+                $dataPoints[] = array("x" => date_timestamp_get($t), "y" => $row['Temp']);
+            }
         }
     }
-    else {print("error");}*/
+    else {print("error");}
 
     CloseCon($conn);
     ?>
@@ -51,10 +44,8 @@
             title: "time"
         },
     	data: [{
-    		type: "spline",
-    		markerSize: 5,
-    		yValueType: "dateTime",
-            xValueType: "decimal",
+            type: "spline",
+            xValueType: "dateTime",
     		dataPoints: <?php echo json_encode($dataPoints, JSON_NUMERIC_CHECK); ?>
     	}]
     });
