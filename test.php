@@ -13,8 +13,6 @@ if ($result->num_rows > 0) {
                 $dataPoints[] = array("x" => $t, "y" => $row['Temp']);
             }
     }
-
-    echo $dataPoints[500]["x"];
 }
 else {print("error");}
 CloseCon($conn);
