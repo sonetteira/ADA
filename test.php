@@ -11,7 +11,7 @@
         array("x" => 10, "y" => 13),
      );*/
     $dataPoints = array();
-    $sql = "SELECT TimeStamp, Temp FROM `Table 1` LIMIT 500";
+    $sql = "SELECT TimeStamp, Temp FROM ada_data";
     
     $result = $conn->query($sql);
 
