@@ -1,6 +1,6 @@
     <?php
      
-     /*$dataPoints = array(
+     $dataPoints = array(
     	array("x" => 946665000000, "y" => 3289000),
     	array("x" => 978287400000, "y" => 3830000),
     	array("x" => 1009823400000, "y" => 2009000),
@@ -18,14 +18,14 @@
     	array("x" => 1388514600000, "y" => 2394000),
     	array("x" => 1420050600000, "y" => 1872000),
     	array("x" => 1451586600000, "y" => 2140000)
-     );*/
-     $dataPoints = array(
+     );
+     /*$dataPoints = array(
         array("x" => 1, "y" => 1),
         array("x" => 2, "y" => 2),
         array("x" => 3, "y" => 3),
         array("x" => 4, "y" => 4),
         array("x" => 10, "y" => 13),
-     );
+     );*/
      
     ?>
     <!DOCTYPE HTML>
