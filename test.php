@@ -1,17 +1,32 @@
 <?php
 require('dbconn.php');
 include('functions.php');
+include('error_values.php');
 $conn = OpenCon();
 $dataPoints = array();
-$sql = "SELECT TimeStamp, Temp FROM ada_data";
+$sql = "SELECT TimeStamp, DOpct FROM ada_data";
 $result = $conn->query($sql);
 if ($result->num_rows > 0) {
     while($row = $result->fetch_assoc()) {
-        if($row['Temp'])
-            if($row['Temp'] < 100) {
-                $t = convert_time($row['TimeStamp']);
-                $dataPoints[] = array("x" => $t, "y" => $row['Temp']);
-            }
+        $data[] = array(
+            "timeStamp"=>$row["TimeStamp"],
+            "temp"=>0,
+            "ph"=>0,
+            "phmv"=>0,
+            "cond"=>0,
+            "dopct"=>$row["DOpct"],
+            "domgl"=>0,
+            "dogain"=>0,
+            "turb"=>0,
+            "depth"=>0
+        );
+    }
+    $new_data = clean_data($data, $checks);
+    foreach($new_data as $row) {
+        $t = convert_time($row['timeStamp']);
+        if(!is_nan($row['dopct'])) {
+            $dataPoints[] = array("x" => $t, "y" => $row['dopct']);
+        }
     }
 }
 else {print("error");}
