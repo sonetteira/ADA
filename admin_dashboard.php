@@ -1,6 +1,7 @@
 <?php
 require('dbconn.php');
 include('functions.php');
+include('error_values.php');
 $conn = OpenCon();
 $dataPoints = array();
 $sql = "SELECT * FROM ada_data LIMIT 96"; #the most recent 24 hours of data 
@@ -21,28 +22,37 @@ if ($result->num_rows > 0) {
         );
     }
     $stati = error_check($dataPoints, $checks);
-    foreach($stati as $sensor => $status) {
-        if($status == "good") {
-            echo $sensor, " is returning good data<br />";
-        }
-        else if($status[0] == "flag") {
-            echo $sensor, " is returning a bad value<br />";
-            echo "&nbsp;&nbsp;&nbsp;&nbsp;value: ", $status[1], "<br />";
-            echo "&nbsp;&nbsp;&nbsp;&nbsp;time: ", $status[2], "<br />";
-        }
-        else {
-            echo $sensor, " is returning an error<br />";
-            echo "&nbsp;&nbsp;&nbsp;&nbsp;value: ", $status[1], "<br />";
-            echo "&nbsp;&nbsp;&nbsp;&nbsp;time: ", $status[2], "<br />";
-        }
-    } 
 }
 else {echo "No data";}
 CloseCon($conn);
+$sensor_list = array("temp"=>"Temperature","ph"=>"pH","phmv"=>"pHmv","cond"=>"Conductivity",
+    "dopct"=>"DO Percent","domgl"=>"DO mg/L","dogain"=>"DO gain","turb"=>"Turbidity","depth"=>"Depth");
+$i=0;
 ?>
+<style>
+img {height: 30px;
+    display: inline-block;}
+table{border-collapse: collapse;}
+td {border: 1px black solid;
+    padding: 3px;}
+span{display: inline-block;
+    margin: 3px;}
+</style>
 </head>
 <body>
 <div id="dashboard">
-
+<h2>Admin Dashboard</h2>
+<p>Time Range: <?php echo $dataPoints[count($dataPoints)-1]["timeStamp"]; ?> - <?php echo $dataPoints[0]["timeStamp"]; ?></p>
+<table>
+<?php 
+foreach($sensor_list as $sensor => $name) {
+    echo "<tr><td>",$name,"</td><td>";
+    if($stati[$sensor] == "good") {echo '<img src="images/greencheck.png" />';}
+    else if($stati[$sensor][0] == "flag") {echo '<img src="images/orangeflag.png" /><span>value = ',
+        $stati[$sensor][1],'<br />time = ',$stati[$sensor][2],'</span>';}
+    else {echo '<img src="images/redx.png" /><span>value = ',$stati[$sensor][1],
+        '<br />time = ',$stati[$sensor][2],'</span>';} $i++;
+    echo '</td></tr>'; 
+} ?>
+</table>
 </div>
-<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
