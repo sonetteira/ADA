@@ -1,5 +1,6 @@
 <?php 
 #constants representing error codes and value limits for each sensor
+#maybe in the future this can populate from a metadata table in the database?
 $temp_error_code = 404404;
 $temp_min = -100;
 $temp_max = 100;
