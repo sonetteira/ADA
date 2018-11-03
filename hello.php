@@ -6,4 +6,7 @@
 </head>
 <p>Hello</p>
 <p>Git works</p>
+<center>
+<iframe width="90%" height="500" src="test.php"></iframe>
+</center>
 </html>
