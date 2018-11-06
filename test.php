@@ -67,13 +67,12 @@ chart.render();
 </head>
 <body>
 <form method="post">
-	<select name="sensorType" >
+	<select name="sensorType" onchange="this.form.submit()">
         <?php foreach($sensor_list as $sensor => $name) {
             echo '<option value="', $sensor, '"',
             ($sensor==$xaxis?"selected":""),  '>', $name, '</option>';
         }?>
     </select>
-    <input type="submit" value="Go"/>
 </form>
 <div id="chartContainer" style="height: 370px; width: 100%;"></div>
 <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
