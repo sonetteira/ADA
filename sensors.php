@@ -41,6 +41,6 @@ $units = array(
     "domgl"=>"Dissolved Oxygen (milligrams/L)",
     "dogain"=>"?",
     "turb"=>"NTU",
-    "depth"=>"m?",
+    "depth"=>"ft?",
 );
 ?>
