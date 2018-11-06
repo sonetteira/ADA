@@ -8,17 +8,34 @@ include('error_values.php');
 $conn = OpenCon();
 $dataPoints = array();
 $data = array();
-if($_SERVER['REQUEST_METHOD']  =='POST') { #retrieve value from dropdown
-    $xaxis = $_POST['sensorType'];
-    $analysis = $_POST['analysis'];
-}
-else { #if form has not been submitted, just use temp
+if($_SERVER['REQUEST_METHOD']!='POST' || isset($_POST['reset'])) {
+    #if form has not been submitted or has been refreshed, just use temp
     $xaxis = "temp";
     $analysis = "";
+    $startDate = "";
+    $endDate = "";
+}
+else { #retrieve value from dropdown
+    $xaxis = $_POST['sensorType'];
+    $analysis = $_POST['analysis'];
+    $startDate = $_POST['startDate'];
+    $endDate = $_POST['endDate'];
 }
 $yaxis = "timestamp"; #graph everything against time
 #retrieve requested data from database
 $sql = "SELECT ". $column_headers[$xaxis] . ", " . $column_headers[$yaxis] . " FROM ada_data";
+if(!$startDate == "" || !$endDate == "") {
+    $sql = $sql . " WHERE ";
+}
+if(!$startDate == "") {
+    $sql = $sql . "timeStamp > '" . $startDate . "'";
+    if(!$endDate == "") {
+        $sql = $sql . " AND ";
+    }
+}
+if(!$endDate == "") {
+    $sql = $sql . "timeStamp < '" . $endDate . "'";
+}
 $result = $conn->query($sql);
 if ($result->num_rows > 0) {
     $i = 0;
@@ -54,8 +71,14 @@ if ($result->num_rows > 0) {
         $ylabel = $units[$yaxis];
     }
 }
-else {print("error");}
+else {print("There is no data for this time range.");}
 CloseCon($conn);
+if($startDate == "") {
+    $startDate = explode(" ", $data[count($data)-1][$yaxis])[0];
+}
+if($endDate == "") {
+    $endDate = explode(" ", $data[0][$yaxis])[0];
+}
 ?>
 
 <script>
@@ -85,13 +108,19 @@ chart.render();
 </script>
 </head>
 <body>
+<table>
+<tr><td>View</td><td>Analysis</td><td>Start Date</td><td>End Date</td></tr>
+<tr>
 <form method="post">
+    <td>
 	<select name="sensorType" onchange="this.form.submit()">
         <?php foreach($sensor_list as $sensor => $name) {
             echo '<option value="', $sensor, '"',
             ($sensor==$xaxis?"selected":""),  '>', $name, '</option>';
         }?>
     </select>
+    </td>
+    <td>
     <select name="analysis" onchange="this.form.submit()">
         <option value="">Raw</option>
     <?php 
@@ -100,7 +129,12 @@ chart.render();
         }
     ?>
     </select>
+    </td>
+    <td><input type="date" name="startDate" onchange="this.form.submit()" value="<?php echo $startDate;?>"/></td>
+    <td><input type="date" name="endDate"  onchange="this.form.submit()" value="<?php echo $endDate;?>"/></td>
+    <td><input type="submit" name="reset" value="Reset"/></td>
 </form>
+</table>
 <div id="chartContainer" style="height: 370px; width: 100%;"></div>
 <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 </body>
