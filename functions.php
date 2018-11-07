@@ -101,3 +101,52 @@ function convert_time($timestamp) {
     #because doesn't everyone recognize milliseconds from Jan 1 1970 when they see it?
     #readability
 }
+
+function comparable_axis($data, $sensors, $range) {
+    #a function to take different types of data and alter the values so they can be graphed side by side
+    $new_data = [];
+    $curved_data = [];
+    
+    foreach($data as $row) {
+        foreach($row as $sensor => $datum) {
+            if(in_array($sensor, $sensors)) {
+                $new_data[$sensor][] = $datum;
+            }
+        }
+    }
+    foreach($new_data as $sensor => $values) {#find max/min
+        if($sensor == 'timestamp') {
+            $curved_data[$sensor] = $values;
+            continue;
+        }
+        $max = max($values);
+        $min = min($values);
+        
+        $curved_data[$sensor] = curve($values, $range, $min, $max);
+    }
+    $new_data = [];
+    
+    foreach($curved_data as $sensor => $values) {
+        $i = 0;
+        foreach($values as $v) {
+            $new_data[$i][$sensor] = $v;
+            $i++;
+        } 
+    }
+    return $new_data;
+}
+
+function curve($values, $y1, $x0, $x1) {
+    $curved_data = [];
+    foreach($values as $x) {
+        if($x1==$x0)
+        {
+            $curved_data[] = 0;
+        }
+        else {
+            $fx = ($y1/($x1-$x0))*($x-$x0);
+            $curved_data[] = $fx;
+        }
+    }
+    return $curved_data;
+}

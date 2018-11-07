@@ -7,6 +7,8 @@ include('analyses.php');
 include('error_values.php');
 $conn = OpenCon();
 $dataPoints = array();
+$x = [];
+$y = [];
 $data = array();
 if($_SERVER['REQUEST_METHOD']!='POST' || isset($_POST['reset'])) {
     #if form has not been submitted or has been refreshed, just use temp
@@ -50,9 +52,11 @@ if ($result->num_rows > 0) {
     $new_data = clean_data($data, $checks); #remove bad data values
     if($analysis == "" || !isset($sensor_analyses[$xaxis][$analysis])) { #if analysis not set or does not match sensorType, display raw data
         foreach($new_data as $row) { #create a table of x and y coordinates to graph
-            $t = convert_time($row[$yaxis]);
+            //$t = convert_time($row[$yaxis]);
             if(!is_nan($row[$xaxis])) {
-                $dataPoints[] = array("x" => $t, "y" => $row[$xaxis]);
+                $y[] = $row[$xaxis];
+                $x[] = '"' . $row[$yaxis] . '"';
+                //$dataPoints[] = array("x" => $t, "y" => $row[$xaxis]);
             }
         }
         $title = $sensor_list[$xaxis];
@@ -63,8 +67,10 @@ if ($result->num_rows > 0) {
         #call the function required by the selected analysis
         $new_data = call_user_func($sensor_analyses[$xaxis][$analysis]["function"], $new_data);
         foreach($new_data as $date => $value) { #create a table of x and y coordinates to graph
-            $t = convert_time($date);
-                $dataPoints[] = array("x" => $t, "y" => $value);
+            //$t = convert_time($date);
+            $y[] = $value;
+            $x[] = '"' . $date . '"';
+            //$dataPoints[] = array("x" => $t, "y" => $value);
         }
         $title = $sensor_analyses[$xaxis][$analysis]["title"];
         $xlabel = $sensor_analyses[$xaxis][$analysis]["units"];
@@ -80,32 +86,6 @@ if($endDate == "") {
     $endDate = explode(" ", $data[0][$yaxis])[0];
 }
 ?>
-
-<script>
-window.onload = function () { //create a spline chart
-     
-var chart = new CanvasJS.Chart("chartContainer", {
-    animationEnabled: true,
-    title:{//use labels from sensor variables - see sensors.php
-		text: <?php echo json_encode($title, JSON_NUMERIC_CHECK); ?> 
-   	},
-   	axisY: {
-    	title: <?php echo json_encode($xlabel, JSON_NUMERIC_CHECK); ?>
-   	},
-    axisX: {
-        title: <?php echo json_encode($ylabel, JSON_NUMERIC_CHECK); ?>
-    },
-    data: [{
-        type: "spline",
-        xValueFormatString: "M D",
-        xValueType: "dateTime",
-        dataPoints: <?php echo json_encode($dataPoints, JSON_NUMERIC_CHECK); ?>
-    }]
-});
-
-chart.render();
-}
-</script>
 </head>
 <body>
 <table>
@@ -135,6 +115,13 @@ chart.render();
     <td><input type="submit" name="reset" value="Reset"/></td>
 </form>
 </table>
-<div id="chartContainer" style="height: 370px; width: 100%;"></div>
-<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+<div id="chartContainer"></div>
+<!--<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>-->
 </body>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>
+var xdata = [<?php echo implode(",",$x); ?>];
+var ydata = [<?php echo implode(",",$y); ?>];
+var data = {x:xdata, y:ydata};
+Plotly.newPlot('chartContainer', [data]);
+</script>
