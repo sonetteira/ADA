@@ -7,7 +7,7 @@ $conn = OpenCon();
 $yaxis = "timestamp";
 $xaxis = array_keys($sensor_list);
 #$sql = "SELECT ". $column_headers[$xaxis] . ", " . $column_headers[$yaxis] . " FROM ada_data LIMIT 672";
-$sql = "SELECT * FROM ada_data LIMIT 672";
+$sql = "SELECT * FROM ada_data LIMIT 672"; #one week of data
 $result = $conn->query($sql);
 $x = [];
 $y = [];
@@ -46,15 +46,17 @@ $k = 0;
 <!-- Plotly chart will be drawn inside this DIV -->
 <div id="myDiv" style="width:100%;height:100%"></div>
 <script>
+//pull data from php script to visualize
 sensors = ['<?php echo implode("','",$good); ?>'];
 x = [<?php echo implode(",",$x); ?>];
 y = [<?php foreach($y as $temp) {
     echo '[', implode(",",$temp), '],'; }?>];
+//generate animation increments
 incr = 2;
 max = x.length-1;
 i = max-incr;
 data = [];
-for(j=0;j<y.length;j++) {
+for(j=0;j<y.length;j++) { //first view
     data[j] = {x:x.slice(i, max-1),
         y:y[j].slice(i, max-1),
         name: sensors[j]};
@@ -63,11 +65,12 @@ for(j=0;j<y.length;j++) {
     data[j] = {x:x,
         y:y[j]};
 }*/
+//plot the first view
 Plotly.newPlot('myDiv', data, {
     xaxis: {range: ["2018-09-12 11:45:00", "2018-09-19 12:15:00"]},
     yaxis: {range: [0, 100]}
 });
-function next() {
+function next() { //function to generate subsequent views for te animation
     if(i-incr>0)
         i -= incr;
     else
@@ -77,7 +80,7 @@ function next() {
         data[j] = {x:x.slice(i, max-1),
             y:y[j].slice(i, max-1)};
     }
-    Plotly.animate('myDiv', {
+    Plotly.animate('myDiv', { //animate te views for a line that extends forward in time
         data: data,
         layout: {}
     }, {
@@ -90,7 +93,7 @@ function next() {
         }
     });
     if(i>0)
-        requestAnimationFrame(next);
+        requestAnimationFrame(next); //loop through animation
 }
 requestAnimationFrame(next);
 </script>

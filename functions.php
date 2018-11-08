@@ -107,7 +107,7 @@ function comparable_axis($data, $sensors, $range) {
     $new_data = [];
     $curved_data = [];
     
-    foreach($data as $row) {
+    foreach($data as $row) { #transform data matrix
         foreach($row as $sensor => $datum) {
             if(in_array($sensor, $sensors)) {
                 $new_data[$sensor][] = $datum;
@@ -126,7 +126,7 @@ function comparable_axis($data, $sensors, $range) {
     }
     $new_data = [];
     
-    foreach($curved_data as $sensor => $values) {
+    foreach($curved_data as $sensor => $values) { #transform data matrix back
         $i = 0;
         foreach($values as $v) {
             $new_data[$i][$sensor] = $v;
@@ -136,7 +136,11 @@ function comparable_axis($data, $sensors, $range) {
     return $new_data;
 }
 
-function curve($values, $y1, $x0, $x1) {
+function curve($values, $y1, $x0, $x1) { #given data, max, min, range: curve data to that range
+    # f(x) = z' + ((y' - z')/(y - z)) * (x - z)
+    # where x is the variable,
+    # y is a given data point, y' is the value y will become (in this case y is the max and y' is the range)
+    # z is another data point, z' is the value z will become (in this case z is the min and z' is 0)
     $curved_data = [];
     foreach($values as $x) {
         if($x1==$x0)

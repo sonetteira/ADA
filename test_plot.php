@@ -122,6 +122,6 @@ if($endDate == "") {
 <script>
 var xdata = [<?php echo implode(",",$x); ?>];
 var ydata = [<?php echo implode(",",$y); ?>];
-var data = {x:xdata, y:ydata};
+var data = {x:xdata, y:ydata,line: {shape: 'spline'}};
 Plotly.newPlot('chartContainer', [data]);
 </script>
