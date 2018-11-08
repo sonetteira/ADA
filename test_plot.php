@@ -69,7 +69,7 @@ if ($result->num_rows > 0) {
         foreach($new_data as $date => $value) { #create a table of x and y coordinates to graph
             //$t = convert_time($date);
             $y[] = $value;
-            $x[] = '"' . $date . '"';
+            $x[] = '"' . $date . ' 00:00:00"';
             //$dataPoints[] = array("x" => $t, "y" => $value);
         }
         $title = $sensor_analyses[$xaxis][$analysis]["title"];
@@ -122,6 +122,13 @@ if($endDate == "") {
 <script>
 var xdata = [<?php echo implode(",",$x); ?>];
 var ydata = [<?php echo implode(",",$y); ?>];
-var data = {x:xdata, y:ydata,line: {shape: 'spline'}};
-Plotly.newPlot('chartContainer', [data]);
+var range_start = xdata[xdata.length-1];
+var range_end = xdata[0];
+var data = [{x:xdata, y:ydata,line: {shape: 'spline'}}];
+var layout = {title: "<?php echo $title; ?>",
+    yaxis: {title: "<?php echo $xlabel; ?>"},
+    xaxis: {title: "<?php echo $ylabel; ?>",
+        range: [range_start, range_end]},
+};
+Plotly.newPlot('chartContainer', data, layout);
 </script>

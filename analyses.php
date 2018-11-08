@@ -33,7 +33,7 @@ function GDD($data) {
     $months = [];
     $startDate = new DateTime($data[0]['timestamp']);
     $endDate = new DateTime($data[count($data)-1]['timestamp']);
-    if(date_format($startDate, 'm-Y') == date_format($endDate, 'm-Y')) { #not enough data to work with
+    if(date_format($startDate, 'Y-m') == date_format($endDate, 'Y-m')) { #not enough data to work with
         echo "<p>This is not a long enough time range to calculate GDD.</p>";
         return $months;
     }
@@ -51,7 +51,7 @@ function GDD($data) {
     #calcuate a sum for each month in the range
     foreach($data as $row) { #look at each row
         $datetime = new DateTime($row['timestamp']);
-        $m = "01-" . date_format($datetime, 'm-Y');
+        $m = date_format($datetime, 'Y-m') .  "-15";
         if(!isset($months[$m])) { #if we do not have a value for this month
             $months[$m] = 0;
         }
@@ -71,7 +71,7 @@ function highlow($data, $sensor) { #return an array of daily highs and lows for 
     $extremes = [];
     foreach($data as $row) { #look at each row
         $datetime = new DateTime($row['timestamp']);
-        $date = date_format($datetime, 'd-m-Y');
+        $date = date_format($datetime, 'Y-m-d');
         if(!isset($extremes[$date]["high"]) || $extremes[$date]["high"] < $row[$sensor]) {
             #if this date does not already have a value, add the temp as this value value
             #or, compare temps, if saved value is lower than this temp, replace it
