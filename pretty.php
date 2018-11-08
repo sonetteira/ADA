@@ -51,6 +51,8 @@ sensors = ['<?php echo implode("','",$good); ?>'];
 x = [<?php echo implode(",",$x); ?>];
 y = [<?php foreach($y as $temp) {
     echo '[', implode(",",$temp), '],'; }?>];
+range_start = x[x.length-1];
+range_end = x[0];
 //generate animation increments
 incr = 2;
 max = x.length-1;
@@ -67,7 +69,7 @@ for(j=0;j<y.length;j++) { //first view
 }*/
 //plot the first view
 Plotly.newPlot('myDiv', data, {
-    xaxis: {range: ["2018-09-12 11:45:00", "2018-09-19 12:15:00"]},
+    xaxis: {range: [range_start, range_end]},
     yaxis: {range: [0, 100]}
 });
 function next() { //function to generate subsequent views for te animation
