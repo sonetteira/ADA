@@ -7,6 +7,7 @@ include('analyses.php');
 include('error_values.php');
 $conn = OpenCon();
 $dataPoints = array();
+$lin_reg = [];
 $x = [];
 $y = [];
 $data = array();
@@ -16,12 +17,19 @@ if($_SERVER['REQUEST_METHOD']!='POST' || isset($_POST['reset'])) {
     $analysis = "";
     $startDate = "";
     $endDate = "";
+    $lg = false;
 }
 else { #retrieve value from dropdown
     $xaxis = $_POST['sensorType'];
     $analysis = $_POST['analysis'];
     $startDate = $_POST['startDate'];
     $endDate = $_POST['endDate'];
+    if(isset($_POST['linreg']) && $_POST['linreg']=="yes") {
+        $lg = true; #show linear regression
+    }
+    else {
+        $lg = false;
+    }
 }
 $yaxis = "timestamp"; #graph everything against time
 #retrieve requested data from database
@@ -62,6 +70,7 @@ if ($result->num_rows > 0) {
         $title = $sensor_list[$xaxis];
         $xlabel = $units[$xaxis];
         $ylabel = $units[$yaxis];
+        $label = $sensor_short_titles[$xaxis];
     }
     else {
         #call the function required by the selected analysis
@@ -75,6 +84,10 @@ if ($result->num_rows > 0) {
         $title = $sensor_analyses[$xaxis][$analysis]["title"];
         $xlabel = $sensor_analyses[$xaxis][$analysis]["units"];
         $ylabel = $units[$yaxis];
+        $label = $sensor_analyses[$xaxis][$analysis]["short_title"];
+    }
+    if($lg) {
+        $lin_reg = linear_regression($x, $y);
     }
 }
 else {print("There is no data for this time range.");}
@@ -90,9 +103,9 @@ if($endDate == "") {
 <body>
 <table>
 <tr><td>View</td><td>Analysis</td><td>Start Date</td><td>End Date</td></tr>
-<tr>
+
 <form method="post">
-    <td>
+    <tr><td>
 	<select name="sensorType" onchange="this.form.submit()">
         <?php foreach($sensor_list as $sensor => $name) {
             echo '<option value="', $sensor, '"',
@@ -112,19 +125,25 @@ if($endDate == "") {
     </td>
     <td><input type="date" name="startDate" onchange="this.form.submit()" value="<?php echo $startDate;?>"/></td>
     <td><input type="date" name="endDate"  onchange="this.form.submit()" value="<?php echo $endDate;?>"/></td>
-    <td><input type="submit" name="reset" value="Reset"/></td>
+    <td>
+        <label>Show Linear Regression</label>
+        <input type="checkbox" name="linreg" value="yes" onchange="this.form.submit()" <?php echo ($lg?"checked":""); ?>/>
+    </td>
+    </tr>
+    <tr><td><input type="submit" style="margin-left:" name="reset" value="Reset"/></td></tr>
 </form>
 </table>
 <div id="chartContainer"></div>
-<!--<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>-->
 </body>
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <script>
 var xdata = [<?php echo implode(",",$x); ?>];
 var ydata = [<?php echo implode(",",$y); ?>];
+var yprimedata = [<?php echo implode(",",$lin_reg); ?>];
 var range_start = xdata[xdata.length-1];
 var range_end = xdata[0];
-var data = [{x:xdata, y:ydata,line: {shape: 'spline'}}];
+var data = [{x:xdata, y:ydata,line: {shape: 'spline'},name: "<?php echo $label; ?>"},
+    {x:xdata, y:yprimedata, name: "linear regression"}];
 var layout = {title: "<?php echo $title; ?>",
     yaxis: {title: "<?php echo $xlabel; ?>"},
     xaxis: {title: "<?php echo $ylabel; ?>",

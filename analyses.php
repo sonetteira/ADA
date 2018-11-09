@@ -3,9 +3,9 @@
 $sensor_analyses = [
     "temp"=>[
         "dtr" => 
-            ["title" => "Daily Temperature Range", "units" => "°C", "function" => "DTR"],
+            ["title" => "Daily Temperature Range", "units" => "°C", "function" => "DTR", "short_title" => "DTR"],
         "gdd" =>
-            ["title" => "Growing Degree Days", "units" => "°F Base 50", "function" => "GDD"]
+            ["title" => "Growing Degree Days", "units" => "°F Base 50", "function" => "GDD", "short_title" => "GDD"]
     ],
     "ph"=>[],
     "phmv"=>[],

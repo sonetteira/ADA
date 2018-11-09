@@ -43,4 +43,17 @@ $units = array(
     "turb"=>"NTU",
     "depth"=>"ft?",
 );
+
+#short titles
+$sensor_short_titles = array(
+    "temp"=>"Temp",
+    "ph"=>"pH",
+    "phmv"=>"pHmv",
+    "cond"=>"Conductivity",
+    "dopct"=>"DO %",
+    "domgl"=>"DO mg/L",
+    "dogain"=>"DO gain",
+    "turb"=>"Turbidity",
+    "depth"=>"Depth"
+);
 ?>

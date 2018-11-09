@@ -154,3 +154,65 @@ function curve($values, $y1, $x0, $x1) { #given data, max, min, range: curve dat
     }
     return $curved_data;
 }
+
+function linear_regression($xvalues, $yvalues) {
+    if(count($xvalues) == 0 || count($xvalues)!=count($yvalues)) {
+        #if array is empty or arrays are not of equal length, return empty array
+        return [];
+    }
+    #generate an array of y values for a linear regression line
+    $numx = [];
+    foreach($xvalues as $x) { #create a numerical array for time values
+        $date = new DateTime(str_replace('"','',$x));
+        $numx[] = (int)(date_format($date, "U"))/100000;
+    }
+    $meanx = array_sum($numx) / count($xvalues); #average of all x values (time)
+    $meany = array_sum($yvalues) / count($yvalues); #average of all y values
+    $sdx = standard_deviation($numx); #standard deviation for x
+    $sdy = standard_deviation($yvalues); #standard deviation for y
+    $corr = correlation($numx, $yvalues); #pearson correlation coefficient
+    if($sdx!=0) {
+        $slope = $corr*$sdy/$sdx;
+    } else {$slope = $corr*$sdy;}
+    $intercept = $meany - ($slope * $meanx);
+    $yprime = [];
+    foreach($numx as $x) { #generate an array of predicted values for the linear regression line
+        $yprime[] = ($slope * $x) + $intercept;
+    }
+    return $yprime;
+}
+
+function standard_deviation($aValues, $bSample = false) #http://php.net/manual/en/function.stats-standard-deviation.php
+{
+    $fMean = array_sum($aValues) / count($aValues);
+    $fVariance = 0.0;
+    foreach ($aValues as $i)
+    {
+        $fVariance += pow($i - $fMean, 2);
+    }
+    $fVariance /= ( $bSample ? count($aValues) - 1 : count($aValues) );
+    return (float) sqrt($fVariance);
+}
+
+function correlation($x, $y){ #https://www.statisticshowto.datasciencecentral.com/probability-and-statistics/correlation-coefficient-formula/
+    $n = count($x);
+    $xy = [];
+    $x2 = [];
+    $y2 = [];
+    $xd = [];
+    $yd = [];
+    $xmean = array_sum($x) / count($x);
+    $ymean = array_sum($y) / count($y);
+    for($i=0;$i<count($x);$i++) {
+        $xd[$i] = $x[$i] - $xmean;
+        $yd[$i] = $y[$i] - $ymean;
+        $xy[$i] = $xd[$i]*$yd[$i];
+        $x2[$i] = pow($xd[$i],2);
+        $y2[$i] = pow($yd[$i],2);
+    }
+    
+    $corr = array_sum($xy) /
+        sqrt(array_sum($x2)*array_sum($y2));
+    return $corr;
+}
+
