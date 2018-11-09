@@ -1,4 +1,7 @@
 <head>
+<style>
+.invisible {display: none;}
+</style>
 <?php
 require('dbconn.php');
 include('sensors.php');
@@ -6,11 +9,12 @@ include('functions.php');
 include('analyses.php');
 include('error_values.php');
 $conn = OpenCon();
-$dataPoints = array();
+$dataPoints = [];
 $lin_reg = [];
 $x = [];
 $y = [];
-$data = array();
+$data = [];
+$stats = [];
 if($_SERVER['REQUEST_METHOD']!='POST' || isset($_POST['reset'])) {
     #if form has not been submitted or has been refreshed, just use temp
     $xaxis = "temp";
@@ -18,6 +22,7 @@ if($_SERVER['REQUEST_METHOD']!='POST' || isset($_POST['reset'])) {
     $startDate = "";
     $endDate = "";
     $lg = false;
+    $ss = false;
 }
 else { #retrieve value from dropdown
     $xaxis = $_POST['sensorType'];
@@ -29,6 +34,12 @@ else { #retrieve value from dropdown
     }
     else {
         $lg = false;
+    }
+    if(isset($_POST['stats']) && $_POST['stats']=="yes") {
+        $ss = true; #show linear regression
+    }
+    else {
+        $ss = false;
     }
 }
 $yaxis = "timestamp"; #graph everything against time
@@ -89,6 +100,7 @@ if ($result->num_rows > 0) {
     if($lg) {
         $lin_reg = linear_regression($x, $y);
     }
+    $stats = calculate_stats($x, $y);
 }
 else {print("There is no data for this time range.");}
 CloseCon($conn);
@@ -128,15 +140,30 @@ if($endDate == "") {
     <td>
         <label>Show Linear Regression</label>
         <input type="checkbox" name="linreg" value="yes" onchange="this.form.submit()" <?php echo ($lg?"checked":""); ?>/>
+        <br />
+        <label>Show Statistics</label>
+        <input type="checkbox" id="statscb" name="stats" value="yes" onchange="show()" <?php echo ($ss?"checked":""); ?>/>
     </td>
     </tr>
     <tr><td><input type="submit" style="margin-left:" name="reset" value="Reset"/></td></tr>
 </form>
 </table>
 <div id="chartContainer"></div>
+<div id="statsContainer" class="invisible">
+<table>
+<tr><td>Range</td><td><?php echo $stats['min'], " - ", $stats['max']; ?></td></tr>
+<tr><td>Standard Deviation</td><td><?php echo $stats['sd']; ?></td></tr>
+<tr><td>Slope</td><td><?php echo $stats['slope']; ?></td></tr>
+</div>
 </body>
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <script>
+function show() {
+    if(document.getElementById("statscb").checked)
+        document.getElementById("statsContainer").className = "";
+    else
+        document.getElementById("statsContainer").className = "invisible";
+}
 var xdata = [<?php echo implode(",",$x); ?>];
 var ydata = [<?php echo implode(",",$y); ?>];
 var yprimedata = [<?php echo implode(",",$lin_reg); ?>];
@@ -150,4 +177,5 @@ var layout = {title: "<?php echo $title; ?>",
         range: [range_start, range_end]},
 };
 Plotly.newPlot('chartContainer', data, layout);
+show();
 </script>

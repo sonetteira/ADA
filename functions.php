@@ -216,3 +216,24 @@ function correlation($x, $y){ #https://www.statisticshowto.datasciencecentral.co
     return $corr;
 }
 
+function calculate_stats($xvalues, $yvalues) {
+    if(count($xvalues) == 0 || count($xvalues)!=count($yvalues)) {
+        #if array is empty or arrays are not of equal length, return empty array
+        return ["sd" => NAN, "slope" => NAN, "max" => NAN, "min" => NAN];
+    }
+    #generate an array of y values for a linear regression line
+    $numx = [];
+    foreach($xvalues as $x) { #create a numerical array for time values
+        $date = new DateTime(str_replace('"','',$x));
+        $numx[] = (int)(date_format($date, "U"))/100000;
+    }
+    $sdx = standard_deviation($numx); #standard deviation for x
+    $sdy = standard_deviation($yvalues); #standard deviation for y
+    $corr = correlation($numx, $yvalues); #pearson correlation coefficient
+    if($sdx!=0) {
+        $slope = $corr*$sdy/$sdx;
+    } else {$slope = $corr*$sdy;}
+    $max = max($yvalues);
+    $min = min($yvalues);
+    return ["sd" => round($sdy,3), "slope" => round($slope,3), "max" => round($max,3), "min" => round($min,3)];
+}
