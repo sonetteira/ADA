@@ -154,6 +154,7 @@ if($endDate == "") {
 <tr><td>Range</td><td><?php echo $stats['min'], " - ", $stats['max']; ?></td></tr>
 <tr><td>Standard Deviation</td><td><?php echo $stats['sd']; ?></td></tr>
 <tr><td>Slope</td><td><?php echo $stats['slope']; ?></td></tr>
+<tr><td>Pearson's Correlation Coefficient</td><td><?php echo $stats['corr']; ?></td></tr>
 </div>
 </body>
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>

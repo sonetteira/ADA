@@ -155,7 +155,7 @@ function curve($values, $y1, $x0, $x1) { #given data, max, min, range: curve dat
     return $curved_data;
 }
 
-function linear_regression($xvalues, $yvalues) {
+function linear_regression($xvalues, $yvalues) { #http://onlinestatbook.com/2/regression/intro.html
     if(count($xvalues) == 0 || count($xvalues)!=count($yvalues)) {
         #if array is empty or arrays are not of equal length, return empty array
         return [];
@@ -194,7 +194,7 @@ function standard_deviation($aValues, $bSample = false) #http://php.net/manual/e
     return (float) sqrt($fVariance);
 }
 
-function correlation($x, $y){ #https://www.statisticshowto.datasciencecentral.com/probability-and-statistics/correlation-coefficient-formula/
+function correlation($x, $y){ #http://onlinestatbook.com/2/describing_bivariate_data/calculation.html
     $n = count($x);
     $xy = [];
     $x2 = [];
@@ -216,12 +216,18 @@ function correlation($x, $y){ #https://www.statisticshowto.datasciencecentral.co
     return $corr;
 }
 
-function calculate_stats($xvalues, $yvalues) {
+function calculate_stats($xvalues, $yvalues, $precision = 3) {
+    $stats = [
+        "sd" => NAN,
+        "slope" => NAN,
+        "max" => NAN,
+        "min" => NAN
+    ];
     if(count($xvalues) == 0 || count($xvalues)!=count($yvalues)) {
         #if array is empty or arrays are not of equal length, return empty array
-        return ["sd" => NAN, "slope" => NAN, "max" => NAN, "min" => NAN];
+        return $stats;
     }
-    #generate an array of y values for a linear regression line
+    #generate stats
     $numx = [];
     foreach($xvalues as $x) { #create a numerical array for time values
         $date = new DateTime(str_replace('"','',$x));
@@ -233,7 +239,10 @@ function calculate_stats($xvalues, $yvalues) {
     if($sdx!=0) {
         $slope = $corr*$sdy/$sdx;
     } else {$slope = $corr*$sdy;}
-    $max = max($yvalues);
-    $min = min($yvalues);
-    return ["sd" => round($sdy,3), "slope" => round($slope,3), "max" => round($max,3), "min" => round($min,3)];
+    $stats['sd'] = round($sdy,$precision);
+    $stats['slope'] = round($slope,$precision);
+    $stats['corr']=  round($corr,$precision);
+    $stats['max'] = round(max($yvalues),$precision);
+    $stats['min'] = round(min($yvalues),$precision);
+    return $stats;
 }
