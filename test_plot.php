@@ -85,12 +85,12 @@ if ($result->num_rows > 0) {
     }
     else {
         #call the function required by the selected analysis
-        $new_data = call_user_func($sensor_analyses[$xaxis][$analysis]["function"], $new_data);
+        $new_data = call_user_func($sensor_analyses[$xaxis][$analysis]["function"], $new_data, $yaxis, $xaxis);
         foreach($new_data as $date => $value) { #create a table of x and y coordinates to graph
-            //$t = convert_time($date);
-            $y[] = $value;
-            $x[] = '"' . $date . ' 00:00:00"';
-            //$dataPoints[] = array("x" => $t, "y" => $value);
+            if(!is_nan($value)) {
+                $y[] = $value;
+                $x[] = '"' . $date . ' 00:00:00"';
+            }
         }
         $title = $sensor_analyses[$xaxis][$analysis]["title"];
         $xlabel = $sensor_analyses[$xaxis][$analysis]["units"];
