@@ -211,6 +211,8 @@ function correlation($x, $y){ #http://onlinestatbook.com/2/describing_bivariate_
         $y2[$i] = pow($yd[$i],2);
     }
     
+    if(sqrt(array_sum($x2)*array_sum($y2)) == 0)
+    {return array_sum($xy);}
     $corr = array_sum($xy) /
         sqrt(array_sum($x2)*array_sum($y2));
     return $corr;
