@@ -12,41 +12,55 @@ $sensor_analyses = [
     "ph"=>[
         "avg" =>
             ["title" => "Daily Average pH", "units" => "pH", "function" => "daily_average", "short_title" => "average"],
+        "dtr" => 
+            ["title" => "Daily pH Range", "units" => "pH", "function" => "DTR", "short_title" => "daily range"],
     ],
     "phmv"=>[
         "avg" =>
             ["title" => "Daily Average pH mv", "units" => "millivolts", "function" => "daily_average", "short_title" => "average"],
+        "dtr" => 
+            ["title" => "Daily pH mv Range", "units" => "millivolts", "function" => "DTR", "short_title" => "daily range"],
     ],
     "cond"=>[
         "avg" =>
             ["title" => "Daily Average Conductivity", "units" => "microsiemens/cm", "function" => "daily_average", "short_title" => "average"],
+        "dtr" => 
+            ["title" => "Daily Conductivity Range", "units" => "microsiemens/cm", "function" => "DTR", "short_title" => "daily range"],
     ],
     "dopct"=>[
         "avg" =>
             ["title" => "Daily Average Dissolved Oxygen (%)", "units" => "%", "function" => "daily_average", "short_title" => "average"],
+        "dtr" => 
+            ["title" => "Daily Dissolved Oxygen (%) Range", "units" => "%", "function" => "DTR", "short_title" => "daily range"],
     ],
     "domgl"=>[
         "avg" =>
             ["title" => "Daily Average Dissolved Oxygen (mg/L)", "units" => "milligrams/L", "function" => "daily_average", "short_title" => "average"],
+        "dtr" => 
+            ["title" => "Daily Dissolved Oxygen (mg/L) Range", "units" => "milligrams/L", "function" => "DTR", "short_title" => "daily range"],
     ],
     "dogain"=>[],
     "turb"=>[
         "avg" =>
             ["title" => "Daily Average Turbidity", "units" => "NTU", "function" => "daily_average", "short_title" => "average"],
+        "dtr" => 
+            ["title" => "Daily Turbidity Range", "units" => "NTU", "function" => "DTR", "short_title" => "daily range"],
     ],
     "depth"=>[
         "avg" =>
             ["title" => "Daily Average Depth", "units" => "ft?", "function" => "daily_average", "short_title" => "average"],
+        "dtr" => 
+            ["title" => "Daily Depth Range", "units" => "ft?", "function" => "DTR", "short_title" => "daily range"],
     ]
 ];
 
 function DTR($data, $time, $sensor) {
-    #generate an array with daily temperature range given daily temperature data
+    #generate an array with daily data range
     $daily_high_low = highlow($data, $time, $sensor);
     $delta = [];
     #loop through highs and lows and generate an array of the difference
-    foreach($daily_high_low as $date => $temps) {
-        $delta[$date] = $temps["high"] - $temps["low"];
+    foreach($daily_high_low as $date => $values) {
+        $delta[$date] = $values["high"] - $values["low"];
     }
     return $delta;
 }
