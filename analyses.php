@@ -3,54 +3,56 @@
 $sensor_analyses = [
     "temp"=>[
         "avg" =>
-            ["title" => "Daily Average Temperature", "units" => "°C", "function" => "daily_average", "short_title" => "average"],
+            ["title" => "Daily Average Temperature", "units" => $units["temp"], "function" => "daily_average", "short_title" => "average"],
         "dtr" => 
-            ["title" => "Daily Temperature Range", "units" => "°C", "function" => "DTR", "short_title" => "DTR"],
+            ["title" => "Daily Temperature Range", "units" => $units["temp"], "function" => "DTR", "short_title" => "DTR"],
         "gdd" =>
-            ["title" => "Growing Degree Days", "units" => "°F Base 50", "function" => "GDD", "short_title" => "GDD"]
+            ["title" => "Growing Degree Days", "units" => "°F Base 50", "function" => "GDD", "short_title" => "GDD"],
+        "hdd" =>
+            ["title" => "Heating Degree Days", "units" => "°F Base 65", "function" => "HDD", "short_title" => "HDD"]
     ],
     "ph"=>[
         "avg" =>
-            ["title" => "Daily Average pH", "units" => "pH", "function" => "daily_average", "short_title" => "average"],
+            ["title" => "Daily Average pH", "units" => $units["ph"], "function" => "daily_average", "short_title" => "average"],
         "dtr" => 
-            ["title" => "Daily pH Range", "units" => "pH", "function" => "DTR", "short_title" => "daily range"],
+            ["title" => "Daily pH Range", "units" => $units["ph"], "function" => "DTR", "short_title" => "daily range"]
     ],
     "phmv"=>[
         "avg" =>
-            ["title" => "Daily Average pH mv", "units" => "millivolts", "function" => "daily_average", "short_title" => "average"],
+            ["title" => "Daily Average pH mv", "units" => $units["phmv"], "function" => "daily_average", "short_title" => "average"],
         "dtr" => 
-            ["title" => "Daily pH mv Range", "units" => "millivolts", "function" => "DTR", "short_title" => "daily range"],
+            ["title" => "Daily pH mv Range", "units" => $units["phmv"], "function" => "DTR", "short_title" => "daily range"]
     ],
     "cond"=>[
         "avg" =>
-            ["title" => "Daily Average Conductivity", "units" => "microsiemens/cm", "function" => "daily_average", "short_title" => "average"],
+            ["title" => "Daily Average Conductivity", "units" => $units["cond"], "function" => "daily_average", "short_title" => "average"],
         "dtr" => 
-            ["title" => "Daily Conductivity Range", "units" => "microsiemens/cm", "function" => "DTR", "short_title" => "daily range"],
+            ["title" => "Daily Conductivity Range", "units" => $units["cond"], "function" => "DTR", "short_title" => "daily range"]
     ],
     "dopct"=>[
         "avg" =>
-            ["title" => "Daily Average Dissolved Oxygen (%)", "units" => "%", "function" => "daily_average", "short_title" => "average"],
+            ["title" => "Daily Average Dissolved Oxygen (%)", "units" => $units["dopct"], "function" => "daily_average", "short_title" => "average"],
         "dtr" => 
-            ["title" => "Daily Dissolved Oxygen (%) Range", "units" => "%", "function" => "DTR", "short_title" => "daily range"],
+            ["title" => "Daily Dissolved Oxygen (%) Range", "units" => $units["dopct"], "function" => "DTR", "short_title" => "daily range"]
     ],
     "domgl"=>[
         "avg" =>
-            ["title" => "Daily Average Dissolved Oxygen (mg/L)", "units" => "milligrams/L", "function" => "daily_average", "short_title" => "average"],
+            ["title" => "Daily Average Dissolved Oxygen (mg/L)", "units" => $units["domgl"], "function" => "daily_average", "short_title" => "average"],
         "dtr" => 
-            ["title" => "Daily Dissolved Oxygen (mg/L) Range", "units" => "milligrams/L", "function" => "DTR", "short_title" => "daily range"],
+            ["title" => "Daily Dissolved Oxygen (mg/L) Range", "units" => $units["domgl"], "function" => "DTR", "short_title" => "daily range"]
     ],
     "dogain"=>[],
     "turb"=>[
         "avg" =>
-            ["title" => "Daily Average Turbidity", "units" => "NTU", "function" => "daily_average", "short_title" => "average"],
+            ["title" => "Daily Average Turbidity", "units" => $units["turb"], "function" => "daily_average", "short_title" => "average"],
         "dtr" => 
-            ["title" => "Daily Turbidity Range", "units" => "NTU", "function" => "DTR", "short_title" => "daily range"],
+            ["title" => "Daily Turbidity Range", "units" => $units["turb"], "function" => "DTR", "short_title" => "daily range"]
     ],
     "depth"=>[
         "avg" =>
-            ["title" => "Daily Average Depth", "units" => "ft?", "function" => "daily_average", "short_title" => "average"],
+            ["title" => "Daily Average Depth", "units" => $units["depth"], "function" => "daily_average", "short_title" => "average"],
         "dtr" => 
-            ["title" => "Daily Depth Range", "units" => "ft?", "function" => "DTR", "short_title" => "daily range"],
+            ["title" => "Daily Depth Range", "units" => $units["depth"], "function" => "DTR", "short_title" => "daily range"]
     ]
 ];
 
@@ -86,14 +88,56 @@ function GDD($data, $time, $sensor) {
         }
     }
     #calcuate a sum for each month in the range
-    foreach($data as $row) { #look at each row
-        $datetime = new DateTime($row[$time]);
+    foreach($daily_averages as $date => $value) { #look at each row
+        $datetime = new DateTime($date);
         $m = date_format($datetime, 'Y-m') .  "-15";
         if(!isset($months[$m])) { #if we do not have a value for this month
             $months[$m] = 0;
         }
-        if(!is_nan($row[$sensor])) {
-            $months[$m] += $row[$sensor];
+        if(!is_nan($value)) {
+            $months[$m] += $value;
+        }
+    }
+    foreach($months as $d => $v) {
+        if(is_nan($v)) {
+            unset($months[$d]);
+        }
+    }
+    return $months;
+}
+
+function HDD($data, $time, $sensor) {
+    #check that data contains values from more than one month
+    $months = [];
+    $startDate = new DateTime($data[0][$time]);
+    $endDate = new DateTime($data[count($data)-1][$time]);
+    foreach($months as $d => $v) {
+        echo $d, ':',$v, ' ';
+    }
+    if(date_format($startDate, 'Y-m') == date_format($endDate, 'Y-m')) { #not enough data to work with
+        echo "<p>This is not a long enough time range to calculate HDD.</p>";
+        return $months;
+    }
+    $hdd_base = 65; #working with a base of 65
+    #generate an array with daily temperature range given daily temperature data
+    $daily_high_low = highlow($data, $time, $sensor);
+    $daily_averages = [];
+    foreach($daily_high_low as $date => $temps) {
+        #calculate average daily base - temp
+        $daily_averages[$date] = $hdd_base - ((celsius_to_fahr($temps["high"]) + celsius_to_fahr($temps["low"])) / 2);
+        if($daily_averages[$date] < 0) { #if the value is less than 0, replace with 0
+            $daily_averages[$date] = 0;
+        }
+    }
+    #calcuate a sum for each month in the range
+    foreach($daily_averages as $date => $value) { #look at each row
+        $datetime = new DateTime($date);
+        $m = date_format($datetime, 'Y-m') .  "-15";
+        if(!isset($months[$m])) { #if we do not have a value for this month
+            $months[$m] = 0;
+        }
+        if(!is_nan($value)) {
+            $months[$m] += $value;
         }
     }
     foreach($months as $d => $v) {

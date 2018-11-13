@@ -71,11 +71,9 @@ if ($result->num_rows > 0) {
     $new_data = clean_data($data, $checks); #remove bad data values
     if($analysis == "" || !isset($sensor_analyses[$xaxis][$analysis])) { #if analysis not set or does not match sensorType, display raw data
         foreach($new_data as $row) { #create a table of x and y coordinates to graph
-            //$t = convert_time($row[$yaxis]);
             if(!is_nan($row[$xaxis])) {
                 $y[] = $row[$xaxis];
                 $x[] = '"' . $row[$yaxis] . '"';
-                //$dataPoints[] = array("x" => $t, "y" => $row[$xaxis]);
             }
         }
         $title = $sensor_list[$xaxis];
@@ -172,10 +170,11 @@ var range_start = xdata[xdata.length-1];
 var range_end = xdata[0];
 var data = [{x:xdata, y:ydata,line: {shape: 'spline'},name: "<?php echo $label; ?>"},
     {x:xdata, y:yprimedata, name: "linear regression"}];
-var layout = {title: "<?php echo $title; ?>",
-    yaxis: {title: "<?php echo $xlabel; ?>"},
-    xaxis: {title: "<?php echo $ylabel; ?>",
-        range: [range_start, range_end]},
+var layout = {
+        title: "<?php echo $title; ?>",
+        yaxis: {title: "<?php echo $xlabel; ?>"},
+        xaxis: {title: "<?php echo $ylabel; ?>",
+        range: [range_start, range_end]}
 };
 Plotly.newPlot('chartContainer', data, layout);
 show();
