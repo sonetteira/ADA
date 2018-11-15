@@ -3,7 +3,7 @@
 .invisible {display: none;}
 </style>
 <?php
-require('./dbconn.php');
+require('../dbconn.php');
 include('sensors.php');
 include('functions.php');
 include('analyses.php');
