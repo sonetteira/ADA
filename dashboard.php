@@ -1,4 +1,5 @@
 <?php
+//Going to need to add a query and dropdown for selecting deployment
 require('../dbconn.php');
 include('sensors.php');
 include('functions.php');
@@ -37,33 +38,37 @@ CloseCon($conn);
 $i=0;
 ?>
 <style>
+body {background-color: #33334d;
+    color: #d1d1e0;}
 img {height: 30px;
     display: inline-block;}
-table{border-collapse: collapse;}
-td {border: 1px black solid;
-    padding: 3px;}
+table{border-collapse: separate;
+    color: #d1d1e0;
+    border: 6px solid #33334d;
+    border-radius: 20px;
+    background-color: #33334d;}
+td {background-color: #47476b;}
 span{display: inline-block;
     margin: 3px;}
-.red {background-color: red;
-    color: black;}
-.green {background-color: green;
-    color: white;}
+.stats {border-spacing: 0px;}
+.stats td {padding: 2px 6px;}
+.side-block {display: inline-block;}
 </style>
 </head>
 <body>
 <div id="dashboard">
-<h2>Dashboard</h2>
 <?php 
-echo "<table><tr><th>Sensor</th><th>Most Recent<br />Value</th></tr>";
+echo "<div class='side-block'><center><strong>Most Recent Value</strong></center>";
+echo "<table class='stats'>";
 foreach($sensor_list as $sensor => $name) { #print a table of most recent values for each sensor
     if(!is_nan($new_data[count($new_data)-1][$sensor])) {
         echo "<tr><td>",$name,"</td>";
         echo "<td>", round($new_data[count($new_data)-1][$sensor],2), "</td></tr>";
     }
 }
-echo "</table>";
+echo "</table></div>";
 $i=0;
-echo "<center><strong>Last 6 Hours</strong></center><br /><table width='100%'>";
+echo "<center><strong>Last 6 Hours</strong></center><table id='graphs' width='100%'>";
 foreach($sensor_list as $sensor => $name) {
     if(!is_nan($new_data[count($new_data)-1][$sensor])) {
         if($i%2==0) { echo "<tr>"; }
@@ -91,11 +96,17 @@ range_end = x[0];
 for(j=0;j<y.length;j++) { //first view
     data = [{x:x,
         y:y[j],
-        name: sensors[j]}];
-        layout = {
-            title: labels[j],
-            yaxis: {title: units[j]}
-        };
+        name: sensors[j],
+        line: {color: '#d1d1e0'}}];
+    layout = {
+        title: labels[j],
+        titlefont: {color: '#d1d1e0'},
+        yaxis: {title: units[j],
+            color: '#d1d1e0'},
+        xaxis: {color: '#d1d1e0'},
+        plot_bgcolor: '#47476b',
+        paper_bgcolor: '#47476b'
+    };
     Plotly.newPlot(sensors[j] + 'chart', data, layout);
 }
 </script>
