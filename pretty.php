@@ -1,5 +1,5 @@
 <?php
-require('dbconn.php');
+require('./dbconn.php');
 include('sensors.php');
 include('functions.php');
 include('error_values.php');
