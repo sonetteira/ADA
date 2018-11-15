@@ -53,36 +53,49 @@ span{display: inline-block;
 <body>
 <div id="dashboard">
 <h2>Dashboard</h2>
-<table>
-<tr><th>Sensor</th><th>Most Recent Value</th><th>Last 6 hours</th></tr>
 <?php 
-#print a table row for each sensor with its name, validity, and drift values
-foreach($sensor_list as $sensor => $name) {
+echo "<table><tr><th>Sensor</th><th>Most Recent<br />Value</th></tr>";
+foreach($sensor_list as $sensor => $name) { #print a table of most recent values for each sensor
     if(!is_nan($new_data[count($new_data)-1][$sensor])) {
         echo "<tr><td>",$name,"</td>";
-        echo "<td>", $new_data[count($new_data)-1][$sensor], "</td>";
-        echo '<td height="400px" width="100%" id="', $sensor, 'chart"></td>';
+        echo "<td>", round($new_data[count($new_data)-1][$sensor],2), "</td></tr>";
+    }
+}
+echo "</table>";
+$i=0;
+echo "<center><strong>Last 6 Hours</strong></center><br /><table width='100%'>";
+foreach($sensor_list as $sensor => $name) {
+    if(!is_nan($new_data[count($new_data)-1][$sensor])) {
+        if($i%2==0) { echo "<tr>"; }
+        echo '<td height="300px" width="45%" id="', $sensor, 'chart"></td>';
+        if($i%2!=0) { echo "</tr>"; }
+        $i++;
     }
 } 
+echo "</table>";
 ?>
-</tr>
 </table>
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <script>
 //pull data from php script to visualize
 sensors = ['<?php echo implode("','",array_keys($y)); ?>'];
+units = [<?php foreach(array_keys($y) as $s) {
+    echo "'", $units[$s], "',";  }?>];
+labels = [<?php foreach(array_keys($y) as $s) {
+    echo "'", $sensor_list[$s], "',";  }?>];
 x = [<?php echo implode(",",$x); ?>];
 y = [<?php foreach($y as $temp) {
     echo '[', implode(",",$temp), '],'; }?>];
 range_start = x[x.length-1];
 range_end = x[0];
-//generate animation increments
-/*for(j=0;j<y.length;j++) { //first view
-    data = {x:x,
+for(j=0;j<y.length;j++) { //first view
+    data = [{x:x,
         y:y[j],
-        name: sensors[j]};
-    Plotly.newPlot(sensors[j] + 'chart', data);
-}*/
-
-Plotly.newPlot('tempchart', {x:x, y:y[0]});
+        name: sensors[j]}];
+        layout = {
+            title: labels[j],
+            yaxis: {title: units[j]}
+        };
+    Plotly.newPlot(sensors[j] + 'chart', data, layout);
+}
 </script>

@@ -41,7 +41,7 @@ $units = array(
     "domgl"=>"milligrams/L",
     "dogain"=>"?",
     "turb"=>"NTU",
-    "depth"=>"ft?",
+    "depth"=>"ft",
 );
 
 #short titles
