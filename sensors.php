@@ -18,8 +18,8 @@ $sensor_list = array(
 );
 #list of sensor abbreviations and the associated column headers in the database
 $column_headers = array(
-    "depl"=>"DeploymentID",
-    "timestamp"=>"TimeStamp",
+    "depl"=>"deployment_id",
+    "timestamp"=>"time_stamp",
     "temp"=>"Temp",
     "ph"=>"pH",
     "phmv"=>"pHmv",
@@ -29,7 +29,7 @@ $column_headers = array(
     "dogain"=>"DOgain",
     "turb"=>"Turbidity",
     "depth"=>"Depth",
-    "invalid"=>"KnownInvaildValue" #this looks like a kyle misspelling.. (-_-)
+    "invalid"=>"valid" #this looks like a kyle misspelling.. (-_-)
 );
 
 #unit data for each sensor
