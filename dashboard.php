@@ -1,7 +1,7 @@
 <style>
 body {background-color: #33334d;
     color: #d1d1e0;}
-img {width: 70%;}
+img {width: 55%;}
 table{color: #d1d1e0;
     background-color: #33334d;
     margin: auto 0;}
