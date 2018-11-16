@@ -69,7 +69,8 @@ foreach($sensor_list as $sensor => $name) { #print a table of most recent values
 }
 echo "</table></center></div>\n";
 echo "<div class='side-block'>";
-if($new_data[count($new_data)-1]['temp'] > 15){
+if($new_data[count($new_data)-1]['temp'] > 15){ #print a thermometer image depending on water temp
+    #if water is warmer than 15 C (~60F), hot. less is cold
     echo "<img src='images/hot.png' />";
 }
 else {
@@ -78,19 +79,20 @@ else {
 echo "</div>\n";
 $i=0;
 echo "<center><strong>Last 6 Hours</strong></center><table id='graphs' width='100%'>\n";
-foreach($sensor_list as $sensor => $name) {
+foreach($sensor_list as $sensor => $name) { #print a graph of the last 6 hours for each sensor
     if(!is_nan($new_data[count($new_data)-1][$sensor])) {
         if($i%3==0) { echo "<tr>"; }
         echo '<td height="300px" width="33%" id="', $sensor, 'chart"></td>';
         if($i%3==2) { echo "</tr>\n"; }
         $i++;
-    }
+    } #this actually only prints the table that the graphs are drawn in, they are drawn later in js
 } 
 echo "</table>";
 ?>
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <script>
 //pull data from php script to visualize
+//this is drawing a graph for each sensor in the table created earlier in the php script
 sensors = ['<?php echo implode("','",array_keys($y)); ?>'];
 units = [<?php foreach(array_keys($y) as $s) {
     echo "'", $units[$s], "',";  }?>];
@@ -101,7 +103,7 @@ y = [<?php foreach($y as $temp) {
     echo '[', implode(",",$temp), '],'; }?>];
 range_start = x[x.length-1];
 range_end = x[0];
-for(j=0;j<y.length;j++) { //first view
+for(j=0;j<y.length;j++) {
     data = [{x:x,
         y:y[j],
         name: sensors[j],
