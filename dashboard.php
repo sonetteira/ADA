@@ -1,3 +1,21 @@
+<style>
+body {background-color: #33334d;
+    color: #d1d1e0;}
+img {width: 70%;}
+table{color: #d1d1e0;
+    background-color: #33334d;
+    margin: auto 0;}
+td {background-color: #33334d;}
+span{display: inline-block;
+    margin: 3px;}
+.stats {}
+.stats td {padding: 2px 6px;}
+.side-block {display: inline-block;
+    width: 25%;
+    padding: 1px;
+    vertical-align: middle;
+    text-align: center;}
+</style>
 <?php
 //Going to need to add a query and dropdown for selecting deployment
 require('../dbconn.php');
@@ -37,49 +55,39 @@ else {echo "No data";}
 CloseCon($conn);
 $i=0;
 ?>
-<style>
-body {background-color: #33334d;
-    color: #d1d1e0;}
-img {height: 30px;
-    display: inline-block;}
-table{border-collapse: separate;
-    color: #d1d1e0;
-    border: 6px solid #33334d;
-    border-radius: 20px;
-    background-color: #33334d;}
-td {background-color: #47476b;}
-span{display: inline-block;
-    margin: 3px;}
-.stats {border-spacing: 0px;}
-.stats td {padding: 2px 6px;}
-.side-block {display: inline-block;}
-</style>
 </head>
 <body>
 <div id="dashboard">
 <?php 
-echo "<div class='side-block'><center><strong>Most Recent Value</strong></center>";
-echo "<table class='stats'>";
+echo "<div class='side-block'><center>\n";
+echo "<table class='stats'><tr><th colspan=2>Most Recent Value</th></tr>";
 foreach($sensor_list as $sensor => $name) { #print a table of most recent values for each sensor
     if(!is_nan($new_data[count($new_data)-1][$sensor])) {
         echo "<tr><td>",$name,"</td>";
-        echo "<td>", round($new_data[count($new_data)-1][$sensor],2), "</td></tr>";
+        echo "<td>", round($new_data[count($new_data)-1][$sensor],2), "</td></tr>\n";
     }
 }
-echo "</table></div>";
+echo "</table></center></div>\n";
+echo "<div class='side-block'>";
+if($new_data[count($new_data)-1]['temp'] > 15){
+    echo "<img src='images/hot.png' />";
+}
+else {
+    echo "<img src='images/cold.png' />";
+}
+echo "</div>\n";
 $i=0;
-echo "<center><strong>Last 6 Hours</strong></center><table id='graphs' width='100%'>";
+echo "<center><strong>Last 6 Hours</strong></center><table id='graphs' width='100%'>\n";
 foreach($sensor_list as $sensor => $name) {
     if(!is_nan($new_data[count($new_data)-1][$sensor])) {
-        if($i%2==0) { echo "<tr>"; }
-        echo '<td height="300px" width="45%" id="', $sensor, 'chart"></td>';
-        if($i%2!=0) { echo "</tr>"; }
+        if($i%3==0) { echo "<tr>"; }
+        echo '<td height="300px" width="33%" id="', $sensor, 'chart"></td>';
+        if($i%3==2) { echo "</tr>\n"; }
         $i++;
     }
 } 
 echo "</table>";
 ?>
-</table>
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <script>
 //pull data from php script to visualize
@@ -102,11 +110,15 @@ for(j=0;j<y.length;j++) { //first view
         title: labels[j],
         titlefont: {color: '#d1d1e0'},
         yaxis: {title: units[j],
-            color: '#d1d1e0'},
-        xaxis: {color: '#d1d1e0'},
-        plot_bgcolor: '#47476b',
-        paper_bgcolor: '#47476b'
+            color: '#d1d1e0',
+            linewidth: 2,
+            showgrid: false},
+        xaxis: {color: '#d1d1e0',
+            linewidth: 2,
+            showgrid: false},
+        plot_bgcolor: '#33334d',
+        paper_bgcolor: '#33334d'
     };
-    Plotly.newPlot(sensors[j] + 'chart', data, layout);
+    Plotly.newPlot(sensors[j] + 'chart', data, layout, {displayModeBar: false});
 }
 </script>
