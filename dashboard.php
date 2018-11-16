@@ -1,11 +1,13 @@
 <style>
-body {background-color: #33334d;
-    color: #d1d1e0;}
+html {--bgcolor: #33334d;
+    --textcolor: #d1d1e0;}
+body {background-color: var(--bgcolor);
+    color: var(--textcolor);}
 img {width: 55%;}
-table{color: #d1d1e0;
-    background-color: #33334d;
+table{color: var(--textcolor);
+    background-color: var(--bgcolor);
     margin: auto 0;}
-td {background-color: #33334d;}
+td {background-color: var(--bgcolor);}
 span{display: inline-block;
     margin: 3px;}
 .stats {}
@@ -93,6 +95,8 @@ echo "</table>";
 <script>
 //pull data from php script to visualize
 //this is drawing a graph for each sensor in the table created earlier in the php script
+var bgcolor = "#33334d";
+var textcolor = "#d1d1e0";
 sensors = ['<?php echo implode("','",array_keys($y)); ?>'];
 units = [<?php foreach(array_keys($y) as $s) {
     echo "'", $units[$s], "',";  }?>];
@@ -107,19 +111,19 @@ for(j=0;j<y.length;j++) {
     data = [{x:x,
         y:y[j],
         name: sensors[j],
-        line: {color: '#d1d1e0'}}];
+        line: {color: textcolor}}];
     layout = {
         title: labels[j],
-        titlefont: {color: '#d1d1e0'},
+        titlefont: {color: textcolor},
         yaxis: {title: units[j],
-            color: '#d1d1e0',
+            color: textcolor,
             linewidth: 2,
             showgrid: false},
-        xaxis: {color: '#d1d1e0',
+        xaxis: {color: textcolor,
             linewidth: 2,
             showgrid: false},
-        plot_bgcolor: '#33334d',
-        paper_bgcolor: '#33334d'
+        plot_bgcolor: bgcolor,
+        paper_bgcolor: bgcolor
     };
     Plotly.newPlot(sensors[j] + 'chart', data, layout, {displayModeBar: false});
 }
