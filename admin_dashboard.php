@@ -3,6 +3,7 @@ html {--bgcolor: #33334d;
     --textcolor: #d1d1e0;}
 body {background-color: var(--bgcolor);
     color: var(--textcolor);}
+form {margin-bottom: 0px;}
 table{margin: 0px auto;}
 td {background-color: var(--bgcolor);}
 span{display: inline-block;
@@ -58,7 +59,9 @@ CloseCon($conn);
 <?php 
 #print a table row for each sensor with its name, validity, and drift values
 foreach($sensor_list as $sensor => $name) {
-    echo "<tr><td>",$name,"</td><td>";
+    echo '<tr><td><form method="post" action="sensor_view.php" id="',  $sensor, 'Form">',
+    '<input type="hidden" name="sensor" value="', $sensor, '"/>',
+    '<span onclick="', $sensor, 'Form.submit()">',$name,'</span></form></td><td>';
     if($stati[$sensor] == "good") {
         echo '<img src="images/greencheck.png" />';
     }
@@ -87,7 +90,7 @@ foreach($sensor_list as $sensor => $name) {
         echo '<td><span>predicted = ', $drift[$sensor][0], '<br />observed = ', $drift[$sensor][1],
         '<br />auditor = ',$drift[$sensor][2], '</span></td>';
     }
-    echo '</tr>'; 
+    echo "</tr>\n"; 
 } ?>
 </table>
 </div>

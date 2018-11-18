@@ -37,27 +37,38 @@ $dataPoints = [];
 #retrieve the most recent 24 hours of data from the database
 if(isset($drift_variables[$yaxis]["x"])) {
     $auditor = $drift_variables[$yaxis]["x"];
+    $sql = "SELECT ". $column_headers[$xaxis] . ", " . $column_headers[$yaxis] . ", " . $column_headers[$auditor] . " FROM ada_data LIMIT 288";
 }
 else {
     $auditor = "";
+    $sql = "SELECT ". $column_headers[$xaxis] . ", " . $column_headers[$yaxis] . " FROM ada_data LIMIT 288";
 }
 #$sql = "SELECT ". $column_headers[$xaxis] . ", " . $column_headers[$yaxis] . ", " . $column_headers[$auditor] . " FROM ada_data WHERE timeStamp < '2018-08-03' LIMIT 96";
 #$sql = "SELECT ". $column_headers[$xaxis] . ", " . $column_headers[$yaxis] . ", " . $column_headers[$auditor] . " FROM ada_data LIMIT 96"; 
-$sql = "SELECT ". $column_headers[$xaxis] . ", " . $column_headers[$yaxis] . ", " . $column_headers[$auditor] . " FROM ada_data LIMIT 288";
 $result = $conn->query($sql);
 if ($result->num_rows > 0) { #create an array of data returned by the query
     while($row = $result->fetch_assoc()) {
-        $dataPoints[] = [
-            $xaxis => $row[$column_headers[$xaxis]],
-            $yaxis => $row[$column_headers[$yaxis]],
-            $auditor => $row[$column_headers[$auditor]]
-        ]; #new row
+        if($auditor != "") {
+            $dataPoints[] = [
+                $xaxis => $row[$column_headers[$xaxis]],
+                $yaxis => $row[$column_headers[$yaxis]],
+                $auditor => $row[$column_headers[$auditor]]
+            ]; #new row with auditor
+        }
+        else {
+            $dataPoints[] = [
+                $xaxis => $row[$column_headers[$xaxis]],
+                $yaxis => $row[$column_headers[$yaxis]]
+            ]; #new row without auditor
+        }
     }
     foreach($dataPoints as $row) { #create a table of x and y coordinates to graph
         $x[] = '"' . $row[$xaxis] . '"';
         $y[0][] = $row[$yaxis];
         #calculate predicted values for this sensor
-        $y[1][] = predict_value($yaxis, $row[$yaxis], $row[$auditor], $drift_variables);
+        if($auditor != "") {
+            $y[1][] = predict_value($yaxis, $row[$yaxis], $row[$auditor], $drift_variables);
+        }
     }
     $title = $sensor_list[$yaxis];
     $xlabel = $units[$xaxis];
@@ -73,7 +84,7 @@ CloseCon($conn);
 <script>
 var xdata = [<?php echo implode(",",$x); ?>];
 var ydata = [<?php echo implode(",",$y[0]); ?>];
-var yprimedata = [<?php echo implode(",",$y[1]); ?>];
+var yprimedata = [<?php echo (isset($y[1])) ? implode(",",$y[1]) : ""; ?>];
 var data = [{x:xdata, y:ydata,line: {shape: 'spline'},name: "<?php echo $label; ?>"},
     {x:xdata, y:yprimedata, name: "predicted"}];
 var layout = {
