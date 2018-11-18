@@ -27,7 +27,7 @@ include('error_values.php');
 $conn = OpenCon();
 $dataPoints = array();
 #retrieve data from the database
-$yaxis = "timestamp"; #graph everything against time
+$xaxis = "timestamp"; #graph everything against time
 $x = [];
 $y = [];
 $sql = "SELECT * FROM ada_data LIMIT 24"; #the most recent 6 hours of data
@@ -36,7 +36,7 @@ if ($result->num_rows > 0) { #create an array of data returned by the query
     $i = 0;
     while($row = $result->fetch_assoc()) { #create an array of data returned by the query
         $data[$i] = array();
-        $data[$i][$yaxis] = $row[$column_headers[$yaxis]];
+        $data[$i][$xaxis] = $row[$column_headers[$xaxis]];
         foreach($sensor_list as $sensor => $name) { #add a datapoint for each sensor
             $data[$i][$sensor] = $row[$column_headers[$sensor]];
         }
@@ -44,8 +44,7 @@ if ($result->num_rows > 0) { #create an array of data returned by the query
     }
     $new_data = clean_data($data, $checks); #remove bad data values
     foreach($new_data as $row) { #create a table of x and y coordinates to graph
-        $t = '"' . $row[$yaxis] . '"';
-        $x[] = $t;
+        $x[] = '"' . $row[$xaxis] . '"';
         foreach($sensor_list as $s => $name) {
             if(!is_nan($row[$s])) {  
                 $y[$s][] = $row[$s];

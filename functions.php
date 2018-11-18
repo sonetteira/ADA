@@ -55,7 +55,6 @@ function detect_drift($data, $variables) {
     #audit sensors against one another for drift
     #algorithms used were generated statically by WEKA machine learner, see drift_values.php for more
     #currently only testing dopct, I can test it off temp and that is the best data type I have
-    $testing_sensors = array("dopct");
     $results = array();
     foreach($data[0] as $sensor => $datum) {
         if($sensor == "timestamp") {#skip time
@@ -68,18 +67,17 @@ function detect_drift($data, $variables) {
             if($results[$sensor] != "good") { #this sensor has already been flagged
                 continue;
             }
-            if(in_array($sensor, $testing_sensors)) {
-                if(is_nan($row[$variables[$sensor]["x"]])) { 
-                    #if the x variable attribute is missing, use the value given by WEKA for that possibility
-                    $predicted_value = $variables[$sensor]["miss"];
-                }
-                else { #calculate predicted value
-                    $predicted_value = $variables[$sensor]["coeff"] * 
-                    $row[$variables[$sensor]["x"]] + $variables[$sensor]["yi"];
-                }
+            if(isset($variables[$sensor]["x"])) {
+                $auditor = $variables[$sensor]["x"];
+                $predicted_value = predict_value($sensor, $datum, $row[$auditor], $variables);
+            }
+            else { #don't currently have a ML algorithm for this yet. Getting there.
+                $predicted_value = NULL;
+            }
+            if(isset($predicted_value)) {
                 if(abs($predicted_value-$datum) > $variables[$sensor]["mae"]) {
                     #if predicted value differs from the observed value by more than the mean absolute error, flag the value
-                    $results[$sensor] = array($predicted_value,$datum);
+                    $results[$sensor] = array($predicted_value,$datum,$row[$auditor]);
                 }
                 else { #passed the test
                     $results[$sensor] = "good";
@@ -88,10 +86,21 @@ function detect_drift($data, $variables) {
             else { #don't currently have a ML algorithm for this yet. Getting there.
                 $results[$sensor] = "";
             }
-
         }
     }
     return $results;
+}
+
+function predict_value($sensor, $datum, $audit, $variables) {
+    if(is_nan($audit)) { 
+        #if the x variable attribute is missing, use the value given by WEKA for that possibility
+        $predicted_value = $variables[$sensor]["miss"];
+    }
+    else { #calculate predicted value
+        $predicted_value = $variables[$sensor]["coeff"] * 
+        $audit + $variables[$sensor]["yi"];
+    }
+    return $predicted_value;
 }
 
 function convert_time($timestamp) { 
