@@ -257,3 +257,21 @@ function calculate_stats($xvalues, $yvalues, $precision = 3) {
     $stats['min'] = round(min($yvalues),$precision);
     return $stats;
 }
+
+function build_svg_path($x, $y1, $y2) { #build an SVG path for the space between 2 curves
+    #used to draw the space allowed by mean absolute error
+    $path = "M " . fix_time($x[0]) . " " . $y1[0];
+    for($i=1; $i<count($x); $i++) {
+        $path = $path . " L " . fix_time($x[$i]) . " " . $y1[$i];
+    }
+    $path = $path . " L " . fix_time($x[count($x)-1]) . " " . $y2[count($x)-1];
+    for($i=count($x)-2; $i>=0; $i--) {
+        $path = $path . " L " . fix_time($x[$i]) . " " . $y2[$i];
+    }
+    $path = $path . " Z";
+    return $path;
+}
+
+function fix_time($t) { #remove quotes, convert to milliseconds echo time, add 6 hours. no idea why
+    return convert_time(str_replace('"', '',$t))+21600000;
+}

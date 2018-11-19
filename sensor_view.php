@@ -37,6 +37,7 @@ $dataPoints = [];
 #retrieve the most recent 24 hours of data from the database
 if(isset($drift_variables[$yaxis]["x"])) {
     $auditor = $drift_variables[$yaxis]["x"];
+    $wiggleroom = $drift_variables[$yaxis]["mae"];
     $sql = "SELECT ". $column_headers[$xaxis] . ", " . $column_headers[$yaxis] . ", " . $column_headers[$auditor] . " FROM ada_data LIMIT 288";
 }
 else {
@@ -71,7 +72,10 @@ if ($result->num_rows > 0) { #create an array of data returned by the query
         $y[0][] = $row[$yaxis];
         #calculate predicted values for this sensor
         if($auditor != "" && !$errors) {
-            $y[1][] = predict_value($yaxis, $row[$yaxis], $row[$auditor], $drift_variables);
+            $pred = predict_value($yaxis, $row[$yaxis], $row[$auditor], $drift_variables);
+            $y[1][] = $pred;
+            $y[2][] = $pred + $wiggleroom;
+            $y[3][] = $pred - $wiggleroom;
         }
     }
     $title = $sensor_list[$yaxis];
@@ -82,6 +86,10 @@ if ($result->num_rows > 0) { #create an array of data returned by the query
     $min = $checks[$yaxis]["min"];
     $max_ob = max($y[0]);
     $min_ob = min($y[0]);
+    $svg_path = "";
+    if($auditor != "" && !$errors) {
+        $svg_path = build_svg_path($x, $y[2], $y[3]);
+    }
 }
 
 else {echo "No data";}
@@ -94,6 +102,7 @@ var bgcolor = "#33334d";
 var textcolor = "#d1d1e0";
 var predcolor = "#9cdaa0";
 var errcolor = "rgba(234, 0, 0, 0.3)";
+var predcloudcolor = "rgba(156, 218, 160, 0.2)";
 var xdata = [<?php echo implode(",",$x); ?>];
 var ydata = [<?php echo implode(",",$y[0]); ?>];
 var yprimedata = [<?php echo (isset($y[1])) ? implode(",",$y[1]) : ""; ?>];
@@ -103,19 +112,21 @@ if(errors) {
     var min = <?php echo $min; ?>;
     var range = [xdata[0], xdata[xdata.length-1]];
     var domain = [<?php echo $min_ob, ", ", $max_ob; ?>]
+} else {
+    svg_path = "<?php echo $svg_path; ?>";
 }
 var data = [
     {
         x:xdata,
         y:ydata,
-        line: {shape: 'spline', color: textcolor},
+        line: {color: textcolor},
         name: "<?php echo $label; ?>"
     },
     {   
         x:xdata,
         y:yprimedata,
         name: "predicted",
-        line: {shape: 'spline', color: predcolor},
+        line: {color: predcolor},
     }
 ];
 var layout = {
@@ -150,5 +161,13 @@ if(errors) {
         line: {width: 0}
     }];
 }
+else {
+    layout.shapes = [{
+      type: 'path',
+      path: svg_path,
+      fillcolor: predcloudcolor,
+      line: {width: 0}}];
+}
 Plotly.newPlot('chartContainer', data, layout);
+console.log(xdata[0], xdata[xdata.length-1]);
 </script>
