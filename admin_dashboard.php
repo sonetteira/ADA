@@ -84,8 +84,7 @@ foreach($sensor_list as $sensor => $name) {
         echo '<td><span>value = ',$stati[$sensor][1],'<br />time = ',$stati[$sensor][2],'</span></td>';
     }
     else if($drift[$sensor] != "good" && $drift[$sensor] != "") {
-        echo '<td><span>predicted = ', $drift[$sensor][0], '<br />observed = ', $drift[$sensor][1],
-        '<br />auditor = ',$drift[$sensor][2], '</span></td>';
+        echo '<td><span>predicted = ', $drift[$sensor][0], '<br />observed = ', $drift[$sensor][1], '</span></td>';
     }
     echo "</tr>\n"; 
 } ?>

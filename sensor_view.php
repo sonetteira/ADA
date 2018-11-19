@@ -9,6 +9,7 @@ span{display: inline-block;
     margin: 3px;}
 img {height: 30px;
     display: inline-block;}
+p {text-align: center;}
 #dashboard {text-align: center;}
 .stats {}
 .stats td {padding: 2px 6px;}
@@ -38,11 +39,11 @@ $dataPoints = [];
 if(isset($drift_variables[$yaxis]["x"])) {
     $auditor = $drift_variables[$yaxis]["x"];
     $wiggleroom = $drift_variables[$yaxis]["mae"];
-    $sql = "SELECT ". $column_headers[$xaxis] . ", " . $column_headers[$yaxis] . ", " . $column_headers[$auditor] . " FROM ada_data LIMIT 288";
+    $sql = "SELECT ". $column_headers[$xaxis] . ", " . $column_headers[$yaxis] . ", " . $column_headers[$auditor] . " FROM ada_data LIMIT 96";
 }
 else {
     $auditor = "";
-    $sql = "SELECT ". $column_headers[$xaxis] . ", " . $column_headers[$yaxis] . " FROM ada_data LIMIT 288";
+    $sql = "SELECT ". $column_headers[$xaxis] . ", " . $column_headers[$yaxis] . " FROM ada_data LIMIT 96";
 }
 #$sql = "SELECT ". $column_headers[$xaxis] . ", " . $column_headers[$yaxis] . ", " . $column_headers[$auditor] . " FROM ada_data WHERE timeStamp < '2018-08-03' LIMIT 96";
 #$sql = "SELECT ". $column_headers[$xaxis] . ", " . $column_headers[$yaxis] . ", " . $column_headers[$auditor] . " FROM ada_data LIMIT 96"; 
@@ -96,10 +97,12 @@ else {echo "No data";}
 CloseCon($conn);
 ?>
 <div id="chartContainer"></div>
+<p><strong>Linear Regression Model for prediction</strong><br /><br /><span id="mlmodel"></span><br /><br />Build using WEKA Version 3.8.2 SimpleLinearRegression</p>
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <script>
 var bgcolor = "#33334d";
 var textcolor = "#d1d1e0";
+var linecolor = "#129afe";
 var predcolor = "#9cdaa0";
 var errcolor = "rgba(234, 0, 0, 0.3)";
 var predcloudcolor = "rgba(156, 218, 160, 0.2)";
@@ -119,7 +122,7 @@ var data = [
     {
         x:xdata,
         y:ydata,
-        line: {color: textcolor},
+        line: {color: linecolor},
         name: "<?php echo $label; ?>"
     },
     {   
@@ -169,5 +172,5 @@ else {
       line: {width: 0}}];
 }
 Plotly.newPlot('chartContainer', data, layout);
-console.log(xdata[0], xdata[xdata.length-1]);
+document.getElementById("mlmodel").innerHTML += "<?php echo str_replace("\r\n", "<br />",$drift_details[$yaxis]); ?>";
 </script>

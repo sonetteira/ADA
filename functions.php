@@ -77,7 +77,7 @@ function detect_drift($data, $variables) {
             if(isset($predicted_value)) {
                 if(abs($predicted_value-$datum) > $variables[$sensor]["mae"]) {
                     #if predicted value differs from the observed value by more than the mean absolute error, flag the value
-                    $results[$sensor] = array($predicted_value,$datum,$row[$auditor]);
+                    $results[$sensor] = array($predicted_value,$datum);
                 }
                 else { #passed the test
                     $results[$sensor] = "good";
