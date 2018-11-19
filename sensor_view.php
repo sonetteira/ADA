@@ -30,7 +30,7 @@ if($_SERVER['REQUEST_METHOD']=='POST') { #get which sensor to display
     $yaxis = $_POST['sensor'];
 }
 else { #if none is requested
-    $yaxis = 'ph';
+    $yaxis = 'dopct';
 }
 $xaxis = 'timestamp';
 $dataPoints = [];
@@ -62,11 +62,15 @@ if ($result->num_rows > 0) { #create an array of data returned by the query
             ]; #new row without auditor
         }
     }
+    $errors = false;
+    if(error_check($dataPoints, $checks)[$yaxis] != "good") {
+        $errors = true;
+    }
     foreach($dataPoints as $row) { #create a table of x and y coordinates to graph
         $x[] = '"' . $row[$xaxis] . '"';
         $y[0][] = $row[$yaxis];
         #calculate predicted values for this sensor
-        if($auditor != "") {
+        if($auditor != "" && !$errors) {
             $y[1][] = predict_value($yaxis, $row[$yaxis], $row[$auditor], $drift_variables);
         }
     }
@@ -74,6 +78,10 @@ if ($result->num_rows > 0) { #create an array of data returned by the query
     $xlabel = $units[$xaxis];
     $ylabel = $units[$yaxis];
     $label = $sensor_short_titles[$yaxis];
+    $max = $checks[$yaxis]["max"];
+    $min = $checks[$yaxis]["min"];
+    $max_ob = max($y[0]);
+    $min_ob = min($y[0]);
 }
 
 else {echo "No data";}
@@ -82,15 +90,65 @@ CloseCon($conn);
 <div id="chartContainer"></div>
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <script>
+var bgcolor = "#33334d";
+var textcolor = "#d1d1e0";
+var predcolor = "#9cdaa0";
+var errcolor = "rgba(234, 0, 0, 0.3)";
 var xdata = [<?php echo implode(",",$x); ?>];
 var ydata = [<?php echo implode(",",$y[0]); ?>];
 var yprimedata = [<?php echo (isset($y[1])) ? implode(",",$y[1]) : ""; ?>];
-var data = [{x:xdata, y:ydata,line: {shape: 'spline'},name: "<?php echo $label; ?>"},
-    {x:xdata, y:yprimedata, name: "predicted"}];
+var errors = <?php echo ($errors==true?"true":"false"); ?>;
+if(errors) {
+    var max = <?php echo $max; ?>;
+    var min = <?php echo $min; ?>;
+    var range = [xdata[0], xdata[xdata.length-1]];
+    var domain = [<?php echo $min_ob, ", ", $max_ob; ?>]
+}
+var data = [
+    {
+        x:xdata,
+        y:ydata,
+        line: {shape: 'spline', color: textcolor},
+        name: "<?php echo $label; ?>"
+    },
+    {   
+        x:xdata,
+        y:yprimedata,
+        name: "predicted",
+        line: {shape: 'spline', color: predcolor},
+    }
+];
 var layout = {
         title: "<?php echo $title; ?>",
-        yaxis: {title: "<?php echo $xlabel; ?>"},
-        xaxis: {title: "<?php echo $ylabel; ?>"}
+        titlefont: {color: textcolor},
+        yaxis: {title: "<?php echo $ylabel; ?>",
+            color: textcolor},
+        xaxis: {title: "<?php echo $xlabel; ?>",
+            color: textcolor,
+            showgrid: false},
+        legend: {font: {color: textcolor}},
+        plot_bgcolor: bgcolor,
+        paper_bgcolor: bgcolor
 };
+if(errors) {
+    layout.shapes = [{
+        type: 'rect', xref: 'x', yref: 'y',
+        y0: max,
+        y1: domain[1],
+        x0: range[0],
+        x1: range[1],
+        fillcolor: errcolor,
+        line: {width: 0}
+    },
+    {
+        type: 'rect', xref: 'x', yref: 'y',
+        y0: domain[0],
+        y1: min,
+        x0: range[0],
+        x1: range[1],
+        fillcolor: errcolor,
+        line: {width: 0}
+    }];
+}
 Plotly.newPlot('chartContainer', data, layout);
 </script>

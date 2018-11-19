@@ -81,10 +81,7 @@ foreach($sensor_list as $sensor => $name) {
             echo '<img src="images/redx.png" />';}
     }
     if($stati[$sensor] != "good" ) {
-        if($stati[$sensor][0] == "flag") {
-            echo '<td><span>value = ',$stati[$sensor][1],'<br />time = ',$stati[$sensor][2],'</span></td>';
-        }
-        echo '<td><span>value = ',$stati[$sensor][1], '<br />time = ',$stati[$sensor][2],'</span></td>';
+        echo '<td><span>value = ',$stati[$sensor][1],'<br />time = ',$stati[$sensor][2],'</span></td>';
     }
     else if($drift[$sensor] != "good" && $drift[$sensor] != "") {
         echo '<td><span>predicted = ', $drift[$sensor][0], '<br />observed = ', $drift[$sensor][1],
