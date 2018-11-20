@@ -62,6 +62,8 @@ $i=0;
 <?php 
 echo "<div class='side-block'><center>\n";
 echo "<table class='stats'><tr><th colspan=2>Most Recent Value</th></tr>";
+echo "<tr><td>Time Stamp</td>";
+echo "<td>", $new_data[count($new_data)-1][$xaxis], "</td></tr>\n";
 foreach($sensor_list as $sensor => $name) { #print a table of most recent values for each sensor
     if(!is_nan($new_data[count($new_data)-1][$sensor])) {
         echo "<tr><td>",$name,"</td>";
