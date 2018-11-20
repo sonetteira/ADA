@@ -3,7 +3,7 @@
 $sensor_analyses = [
     "temp"=>[
         "avg" =>
-            ["title" => "Daily Average Temperature", "units" => $units["temp"], "function" => "daily_average", "short_title" => "average"],
+            ["title" => "Daily Average Temperature", "units" => $units["temp"], "function" => "daily_average", "short_title" => "average temp"],
         "dtr" => 
             ["title" => "Daily Temperature Range", "units" => $units["temp"], "function" => "DTR", "short_title" => "DTR"],
         "gdd" =>
@@ -13,46 +13,46 @@ $sensor_analyses = [
     ],
     "ph"=>[
         "avg" =>
-            ["title" => "Daily Average pH", "units" => $units["ph"], "function" => "daily_average", "short_title" => "average"],
+            ["title" => "Daily Average pH", "units" => $units["ph"], "function" => "daily_average", "short_title" => "average pH"],
         "dtr" => 
-            ["title" => "Daily pH Range", "units" => $units["ph"], "function" => "DTR", "short_title" => "daily range"]
+            ["title" => "Daily pH Range", "units" => $units["ph"], "function" => "DTR", "short_title" => "daily pH range"]
     ],
     "phmv"=>[
         "avg" =>
-            ["title" => "Daily Average pH mv", "units" => $units["phmv"], "function" => "daily_average", "short_title" => "average"],
+            ["title" => "Daily Average pH mv", "units" => $units["phmv"], "function" => "daily_average", "short_title" => "average pH mv"],
         "dtr" => 
-            ["title" => "Daily pH mv Range", "units" => $units["phmv"], "function" => "DTR", "short_title" => "daily range"]
+            ["title" => "Daily pH mv Range", "units" => $units["phmv"], "function" => "DTR", "short_title" => "daily pH mv range"]
     ],
     "cond"=>[
         "avg" =>
-            ["title" => "Daily Average Conductivity", "units" => $units["cond"], "function" => "daily_average", "short_title" => "average"],
+            ["title" => "Daily Average Conductivity", "units" => $units["cond"], "function" => "daily_average", "short_title" => "average cond"],
         "dtr" => 
-            ["title" => "Daily Conductivity Range", "units" => $units["cond"], "function" => "DTR", "short_title" => "daily range"]
+            ["title" => "Daily Conductivity Range", "units" => $units["cond"], "function" => "DTR", "short_title" => "daily cond range"]
     ],
     "dopct"=>[
         "avg" =>
-            ["title" => "Daily Average Dissolved Oxygen (%)", "units" => $units["dopct"], "function" => "daily_average", "short_title" => "average"],
+            ["title" => "Daily Average Dissolved Oxygen (%)", "units" => $units["dopct"], "function" => "daily_average", "short_title" => "average DO%"],
         "dtr" => 
-            ["title" => "Daily Dissolved Oxygen (%) Range", "units" => $units["dopct"], "function" => "DTR", "short_title" => "daily range"]
+            ["title" => "Daily Dissolved Oxygen (%) Range", "units" => $units["dopct"], "function" => "DTR", "short_title" => "daily DO% range"]
     ],
     "domgl"=>[
         "avg" =>
-            ["title" => "Daily Average Dissolved Oxygen (mg/L)", "units" => $units["domgl"], "function" => "daily_average", "short_title" => "average"],
+            ["title" => "Daily Average Dissolved Oxygen (mg/L)", "units" => $units["domgl"], "function" => "daily_average", "short_title" => "average DO mg/L"],
         "dtr" => 
-            ["title" => "Daily Dissolved Oxygen (mg/L) Range", "units" => $units["domgl"], "function" => "DTR", "short_title" => "daily range"]
+            ["title" => "Daily Dissolved Oxygen (mg/L) Range", "units" => $units["domgl"], "function" => "DTR", "short_title" => "daily DO mg/L range"]
     ],
     "dogain"=>[],
     "turb"=>[
         "avg" =>
-            ["title" => "Daily Average Turbidity", "units" => $units["turb"], "function" => "daily_average", "short_title" => "average"],
+            ["title" => "Daily Average Turbidity", "units" => $units["turb"], "function" => "daily_average", "short_title" => "average turb"],
         "dtr" => 
-            ["title" => "Daily Turbidity Range", "units" => $units["turb"], "function" => "DTR", "short_title" => "daily range"]
+            ["title" => "Daily Turbidity Range", "units" => $units["turb"], "function" => "DTR", "short_title" => "daily turb range"]
     ],
     "depth"=>[
         "avg" =>
-            ["title" => "Daily Average Depth", "units" => $units["depth"], "function" => "daily_average", "short_title" => "average"],
+            ["title" => "Daily Average Depth", "units" => $units["depth"], "function" => "daily_average", "short_title" => "average depth"],
         "dtr" => 
-            ["title" => "Daily Depth Range", "units" => $units["depth"], "function" => "DTR", "short_title" => "daily range"]
+            ["title" => "Daily Depth Range", "units" => $units["depth"], "function" => "DTR", "short_title" => "daily depth range"]
     ]
 ];
 
