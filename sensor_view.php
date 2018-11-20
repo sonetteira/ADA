@@ -27,11 +27,17 @@ include('functions.php');
 include('error_values.php');
 include('drift_values.php');
 $conn = OpenCon();
+$startDate = "";
+$endDate = "";
+$yaxis = 'dopct';
 if($_SERVER['REQUEST_METHOD']=='POST') { #get which sensor to display
-    $yaxis = $_POST['sensor'];
-}
-else { #if none is requested
-    $yaxis = 'dopct';
+    if(isset($_POST['sensor'])) {
+        $yaxis = $_POST['sensor'];
+    }
+    if(isset($_POST['startDate'])) {
+        $startDate = $_POST['startDate'];
+        $endDate = $_POST['endDate'];
+    }
 }
 $xaxis = 'timestamp';
 $dataPoints = [];
@@ -39,11 +45,26 @@ $dataPoints = [];
 if(isset($drift_variables[$yaxis]["x"])) {
     $auditor = $drift_variables[$yaxis]["x"];
     $wiggleroom = $drift_variables[$yaxis]["mae"];
-    $sql = "SELECT ". $column_headers[$xaxis] . ", " . $column_headers[$yaxis] . ", " . $column_headers[$auditor] . " FROM ada_data LIMIT 96";
+    $sql = "SELECT ". $column_headers[$xaxis] . ", " . $column_headers[$yaxis] . ", " . $column_headers[$auditor] . " FROM ada_data";
 }
 else {
     $auditor = "";
-    $sql = "SELECT ". $column_headers[$xaxis] . ", " . $column_headers[$yaxis] . " FROM ada_data LIMIT 96";
+    $sql = "SELECT ". $column_headers[$xaxis] . ", " . $column_headers[$yaxis] . " FROM ada_data";
+}
+if(!$startDate == "" || !$endDate == "") {
+    $sql = $sql . " WHERE ";
+}
+else {
+    $sql = $sql . " LIMIT 96";
+}
+if(!$startDate == "") {
+    $sql = $sql . $column_headers[$xaxis] . " > '" . $startDate . "'";
+    if(!$endDate == "") {
+        $sql = $sql . " AND ";
+    }
+}
+if(!$endDate == "") {
+    $sql = $sql . $column_headers[$xaxis] . " < '" . $endDate . "'";
 }
 #$sql = "SELECT ". $column_headers[$xaxis] . ", " . $column_headers[$yaxis] . ", " . $column_headers[$auditor] . " FROM ada_data WHERE timeStamp < '2018-08-03' LIMIT 96";
 #$sql = "SELECT ". $column_headers[$xaxis] . ", " . $column_headers[$yaxis] . ", " . $column_headers[$auditor] . " FROM ada_data LIMIT 96"; 
@@ -68,16 +89,19 @@ if ($result->num_rows > 0) { #create an array of data returned by the query
     if(error_check($dataPoints, $checks)[$yaxis] != "good") {
         $errors = true;
     }
+    $cleanData = clean_data($dataPoints, $checks);
+    $i = 0;
     foreach($dataPoints as $row) { #create a table of x and y coordinates to graph
         $x[] = '"' . $row[$xaxis] . '"';
         $y[0][] = $row[$yaxis];
         #calculate predicted values for this sensor
         if($auditor != "" && !$errors) {
-            $pred = predict_value($yaxis, $row[$yaxis], $row[$auditor], $drift_variables);
+            $pred = predict_value($yaxis, $cleanData[$i][$yaxis], $cleanData[$i][$auditor], $drift_variables);
             $y[1][] = $pred;
             $y[2][] = $pred + $wiggleroom;
             $y[3][] = $pred - $wiggleroom;
         }
+        $i++;
     }
     $title = $sensor_list[$yaxis];
     $xlabel = $units[$xaxis];
@@ -92,12 +116,25 @@ if ($result->num_rows > 0) { #create an array of data returned by the query
         $svg_path = build_svg_path($x, $y[2], $y[3]);
     }
 }
-
 else {echo "No data";}
+if($startDate == "") {
+    $startDate = explode(" ", $dataPoints[count($dataPoints)-1][$xaxis])[0];
+}
+if($endDate == "") {
+    $endDate = explode(" ", $dataPoints[0][$xaxis])[0];
+}
 CloseCon($conn);
 ?>
+<form method="post"><table class="right">
+    <tr><td>Start Date</td><td>End Date</td></tr>
+    <tr>
+    <td rowspan="2"><input type="date" name="startDate" onchange="this.form.submit()" value="<?php echo $startDate;?>"/></td>
+    <td rowspan="2"><input type="date" name="endDate"  onchange="this.form.submit()" value="<?php echo $endDate;?>"/></td>
+    </tr>
+    <input type="hidden" name="sensor" value="<?php echo $yaxis; ?>">
+</table></form>
 <div id="chartContainer"></div>
-<p><strong>Linear Regression Model for prediction</strong><br /><br /><span id="mlmodel"></span><br /><br />Build using WEKA Version 3.8.2 SimpleLinearRegression</p>
+<p><strong>Linear Regression Model for prediction</strong><br /><br /><span id="mlmodel"></span><br /><br />Built using WEKA Version 3.8.2 SimpleLinearRegression</p>
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <script>
 var bgcolor = "#33334d";

@@ -260,18 +260,18 @@ function calculate_stats($xvalues, $yvalues, $precision = 3) {
 
 function build_svg_path($x, $y1, $y2) { #build an SVG path for the space between 2 curves
     #used to draw the space allowed by mean absolute error
+    date_default_timezone_set('America/New_York');
     $path = "M " . fix_time($x[0]) . " " . $y1[0];
     for($i=1; $i<count($x); $i++) {
         $path = $path . " L " . fix_time($x[$i]) . " " . $y1[$i];
     }
-    $path = $path . " L " . fix_time($x[count($x)-1]) . " " . $y2[count($x)-1];
-    for($i=count($x)-2; $i>=0; $i--) {
+    for($i=count($x)-1; $i>=0; $i--) {
         $path = $path . " L " . fix_time($x[$i]) . " " . $y2[$i];
     }
     $path = $path . " Z";
     return $path;
 }
 
-function fix_time($t) { #remove quotes, convert to milliseconds echo time, add 6 hours. no idea why
-    return convert_time(str_replace('"', '',$t))+21600000;
+function fix_time($t) { #remove quotes, convert to milliseconds echo time
+    return convert_time(str_replace('"', '',$t));
 }
