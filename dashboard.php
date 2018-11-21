@@ -26,6 +26,11 @@ include('functions.php');
 include('error_values.php');
 $conn = OpenCon();
 $dataPoints = array();
+$showsensors = [
+    "temp"=>"Temperature",
+    "ph"=>"pH",
+    "dopct"=>"DO Percent"
+];
 #retrieve data from the database
 $xaxis = "timestamp"; #graph everything against time
 $x = [];
@@ -45,7 +50,7 @@ if ($result->num_rows > 0) { #create an array of data returned by the query
     $new_data = clean_data($data, $checks); #remove bad data values
     foreach($new_data as $row) { #create a table of x and y coordinates to graph
         $x[] = '"' . $row[$xaxis] . '"';
-        foreach($sensor_list as $s => $name) {
+        foreach($showsensors as $s => $name) {
             if(!is_nan($row[$s])) {  
                 $y[$s][] = $row[$s];
             }
@@ -82,7 +87,7 @@ else {
 echo "</div>\n";
 $i=0;
 echo "<center><strong>Last 6 Hours</strong></center><table id='graphs' width='100%'>\n";
-foreach($sensor_list as $sensor => $name) { #print a graph of the last 6 hours for each sensor
+foreach($showsensors as $sensor => $name) { #print a graph of the last 6 hours for each sensor
     if(!is_nan($new_data[count($new_data)-1][$sensor])) {
         if($i%3==0) { echo "<tr>"; }
         echo '<td height="300px" width="33%" id="', $sensor, 'chart"></td>';
