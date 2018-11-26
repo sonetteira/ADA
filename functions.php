@@ -275,3 +275,86 @@ function build_svg_path($x, $y1, $y2) { #build an SVG path for the space between
 function fix_time($t) { #remove quotes, convert to milliseconds echo time
     return convert_time(str_replace('"', '',$t));
 }
+
+function create_download($data, $name = "adaData") {
+    #merge arrays
+    $newdata = [];
+    $k = array_keys($data[0][0]);
+    $headers = $k;
+    foreach(array_reverse($data[0]) as $row) {
+        $newdata[$row[$k[0]]][] = $row[$k[1]];
+    }
+    for($j=1; $j<count($data); $j++) {
+        if(count($data[$j])>0) {
+            $k = array_keys($data[$j][0]);
+            $headers[] = $k[1];
+            foreach($data[$j] as $row) {
+                if(isset($newdata[$row[$k[0]]])) { #date already exists, add this datapoint to existing array
+                    $newdata[$row[$k[0]]][] = $row[$k[1]];
+                }
+                else { #need to create an entry for this date
+                    for($n=0; $n<$j; $n++) {
+                        $newdata[$row[$k[0]]][] = NAN;
+                    }
+                    $newdata[$row[$k[0]]][] = $row[$k[1]];
+                }
+            }
+        }
+    }
+    
+    #find if a file exists with this name, if it does add numbers to the end to make it unique.
+    include("sensors.php");
+    $filename = "files/" . $name . ".csv";
+    $i = 1;
+    while(file_exists($filename)) {
+        $filename = "files/" . $name . $i++ . ".csv";
+    }
+    #open file
+    $file = fopen($filename, "w");
+    #generate file contents
+    $header = "#ADA is a reseach project conducted by Pace University's Seidenberg School of Computer Science and Information Systems and Dyson School of Arts and Sciences.\n\n";
+    #loop through units for headers given
+    $metadata = "";
+    $body = "";
+    foreach($headers as $h) {
+        if($h == "timestamp") {
+            $body = $body . "TimeStamp" . ",";
+        }
+        else {
+            $body = $body . $sensor_list[$h] . ",";
+            $metadata = $metadata . "#" . $sensor_list[$h] . " in " . $units[$h] . "\n";
+        }
+    }
+    $body = remove_following_comma($body) . "\n";
+    $line = "";
+    foreach($newdata as $date => $row) { #write each datapoint
+        $line = $date . ",";
+        foreach($row as $value) {
+            $line = $line . $value . ",";
+        }
+        $body = $body . remove_following_comma($line) . "\n";
+    }
+    $header = $header . $metadata . "\n";
+    $txt = $header . $body;
+    fwrite($file, mb_convert_encoding($txt, "CP1252"));
+    fclose($file);
+    return $filename;
+}
+
+function remove_following_comma($txt) {
+    if($txt[strlen($txt)-1] == ",") {
+        return substr($txt, 0, -1);
+    }
+    return $txt;
+}
+
+function downloadFile($file, $name = "AdaData.csv") {
+    ob_start("");
+    header('Content-type:  application/csv');
+    header('Content-Disposition: attachment; filename="' . $name . '";');
+    @ob_clean();
+    readfile($file);
+    ignore_user_abort(true);
+    unlink($file);
+    exit;
+}

@@ -96,16 +96,25 @@ if ($result->num_rows > 0) {
     while($row = $result->fetch_assoc()) { #create an array of data returned by the query
         $dataL[$i] = [];
         $dataL[$i][$xaxis] = $row[$column_headers[$xaxis]];
-        $dataR[$i] = [];
-        $dataR[$i][$xaxis] = $row[$column_headers[$xaxis]];
-        foreach($sensor_list as $sensor => $name) { #add a datapoint for each sensor
+        $dataL[$i][$yaxisLeft] = $row[$column_headers[$yaxisLeft]];
+        if($yaxisRight != "") {
+            $dataR[$i] = [];
+            $dataR[$i][$xaxis] = $row[$column_headers[$xaxis]];
+            $dataR[$i][$yaxisRight] = $row[$column_headers[$yaxisRight]];
+        }
+        /*foreach($sensor_list as $sensor => $name) { #add a datapoint for each sensor
             $dataL[$i][$sensor] = ($sensor==$yaxisLeft ? $row[$column_headers[$sensor]] : 0);
             $dataR[$i][$sensor] = ($sensor==$yaxisRight ? $row[$column_headers[$sensor]] : 0);
-        }
+        }*/
         $i++;
     }
     $new_dataL = clean_data($dataL, $checks); #remove bad data values
     $new_dataR = clean_data($dataR, $checks);
+    if(isset($_POST['download'])) {
+        $download = create_download([$new_dataL, $new_dataR]);
+        //header("location:" . $download);
+        downloadFile($download);
+    }
     if($analysisLeft == "" || !isset($sensor_analyses[$yaxisLeft][$analysisLeft])) { #if analysis not set or does not match sensorType, display raw data
         foreach($new_dataL as $row) { #create a table of x and y coordinates to graph
             if(!is_nan($row[$yaxisLeft])) {
@@ -195,7 +204,7 @@ if($endDate == "") {
 	<select name="sensorTypeLeft" onchange="this.form.submit()">
         <?php foreach($sensor_list as $sensor => $name) {
             echo '<option value="', $sensor, '"',
-            ($sensor==$yaxisLeft?"selected":""),  '>', $name, '</option>';
+            ($sensor==$yaxisLeft?" selected":""),  '>', $name, '</option>';
         }?>
     </select>
     </td>
@@ -204,25 +213,25 @@ if($endDate == "") {
         <option value="">Raw</option>
     <?php 
         foreach($sensor_analyses[$yaxisLeft] as $anal => $info) { #loop through the list of analyses, print an option for each one
-            echo '<option value="', $anal, '"', ($analysisLeft==$anal?"selected":""), '>', $info["title"], '</option>';
+            echo '<option value="', $anal, '"', ($analysisLeft==$anal?" selected":""), '>', $info["title"], '</option>';
         }
     ?>
     </select>
     </td>
     <td>
         <label>Show Linear Regression</label>
-        <input type="checkbox" name="linregLeft" value="yes" onchange="this.form.submit()" <?php echo ($lgL?"checked":""); ?>/>
+        <input type="checkbox" name="linregLeft" value="yes" onchange="this.form.submit()" <?php echo ($lgL?" checked":""); ?>/>
         <br />
         <label>Show Statistics</label>
-        <input type="checkbox" id="statscb" name="statsLeft" value="yes" onchange="show()" <?php echo ($ssL?"checked":""); ?>/>
+        <input type="checkbox" id="statscb" name="statsLeft" value="yes" onchange="show()" <?php echo ($ssL?" checked":""); ?>/>
     </td>
     </tr>
     <tr><td>Right Axis</td><td>
 	<select name="sensorTypeRight" onchange="this.form.submit()">
-        <option value="" <?php echo (""==$yaxisRight?"selected":""); ?>>None</option>
+        <option value="" <?php echo (""==$yaxisRight?" selected":""); ?>>None</option>
         <?php foreach($sensor_list as $sensor => $name) {
             echo '<option value="', $sensor, '"',
-            ($sensor==$yaxisRight?"selected":""),  '>', $name, '</option>';
+            ($sensor==$yaxisRight?" selected":""),  '>', $name, '</option>';
         }?>
     </select>
     </td>
@@ -230,21 +239,24 @@ if($endDate == "") {
     <select name="analysisRight" onchange="this.form.submit()">
         <option value="">Raw</option>
     <?php 
-        foreach($sensor_analyses[$yaxisRight] as $anal => $info) { #loop through the list of analyses, print an option for each one
-            echo '<option value="', $anal, '"', ($analysisRight==$anal?"selected":""), '>', $info["title"], '</option>';
+        if($yaxisRight != "") { 
+                foreach($sensor_analyses[$yaxisRight] as $anal => $info) { #loop through the list of analyses, print an option for each one
+                echo '<option value="', $anal, '" ', ($analysisRight==$anal?" selected":""), '>', $info["title"], '</option>';
+            }
         }
     ?>
     </select>
     </td>
     <td>
         <label>Show Linear Regression</label>
-        <input type="checkbox" name="linregRight" value="yes" onchange="this.form.submit()" <?php echo ($lgR?"checked":""); ?>/>
+        <input type="checkbox" name="linregRight" value="yes" onchange="this.form.submit()" <?php echo ($lgR?" checked":""); ?>/>
         <br />
         <label>Show Statistics</label>
-        <input type="checkbox" id="statscbR" name="statsRight" value="yes" onchange="show()" <?php echo ($ssR?"checked":""); ?>/>
+        <input type="checkbox" id="statscbR" name="statsRight" value="yes" onchange="show()" <?php echo ($ssR?" checked":""); ?>/>
     </td>
     </tr>
-    <tr><td><input type="submit" style="margin-left:" name="reset" value="Reset"/></td></tr>
+    <tr><td><input type="submit" name="reset" value="Reset"/></td>
+    <td><input type="submit" name="download" value="Download Data"/></td></tr>
 </table>
 <table class="right">
     <tr><td>Start Date</td><td>End Date</td></tr>
