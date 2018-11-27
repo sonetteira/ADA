@@ -35,7 +35,7 @@ $showsensors = [
 $xaxis = "timestamp"; #graph everything against time
 $x = [];
 $y = [];
-$sql = "SELECT * FROM ada_data LIMIT 24"; #the most recent 6 hours of data
+$sql = "SELECT * FROM " . $tbl . " LIMIT 24"; #the most recent 6 hours of data
 $result = $conn->query($sql);
 if ($result->num_rows > 0) { #create an array of data returned by the query
     $i = 0;

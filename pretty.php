@@ -29,7 +29,7 @@ foreach($checklist as $s => $y) {
         $selects[] = $column_headers[$s];
     }
 }
-$sql = "SELECT " . $column_headers[$yaxis] . ", " . implode(", ",$selects) . " FROM ada_data LIMIT 672"; #one week of data
+$sql = "SELECT " . $column_headers[$yaxis] . ", " . implode(", ",$selects) . " FROM " . $tbl . " LIMIT 672"; #one week of data
 $result = $conn->query($sql);
 
 $x = [];

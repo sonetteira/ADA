@@ -72,10 +72,10 @@ else { #retrieve value from dropdown
 $xaxis = "timestamp"; #graph everything against time
 #retrieve requested data from database
 if($yaxisRight != "") {
-    $sql = "SELECT ". $column_headers[$yaxisLeft] . ", " . $column_headers[$yaxisRight] . ", " . $column_headers[$xaxis] . " FROM ada_data";
+    $sql = "SELECT ". $column_headers[$yaxisLeft] . ", " . $column_headers[$yaxisRight] . ", " . $column_headers[$xaxis] . " FROM " . $tbl;
 }
 else {
-    $sql = "SELECT ". $column_headers[$yaxisLeft] . ", " . $column_headers[$xaxis] . " FROM ada_data";
+    $sql = "SELECT ". $column_headers[$yaxisLeft] . ", " . $column_headers[$xaxis] . " FROM " . $tbl;
 }
 
 if(!$startDate == "" || !$endDate == "") {

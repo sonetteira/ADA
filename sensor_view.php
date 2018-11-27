@@ -45,11 +45,11 @@ $dataPoints = [];
 if(isset($drift_variables[$yaxis]["x"])) {
     $auditor = $drift_variables[$yaxis]["x"];
     $wiggleroom = $drift_variables[$yaxis]["mae"];
-    $sql = "SELECT ". $column_headers[$xaxis] . ", " . $column_headers[$yaxis] . ", " . $column_headers[$auditor] . " FROM ada_data";
+    $sql = "SELECT ". $column_headers[$xaxis] . ", " . $column_headers[$yaxis] . ", " . $column_headers[$auditor] . " FROM " . $tbl;
 }
 else {
     $auditor = "";
-    $sql = "SELECT ". $column_headers[$xaxis] . ", " . $column_headers[$yaxis] . " FROM ada_data";
+    $sql = "SELECT ". $column_headers[$xaxis] . ", " . $column_headers[$yaxis] . " FROM " . $tbl;
 }
 if(!$startDate == "" || !$endDate == "") {
     $sql = $sql . " WHERE ";
@@ -66,8 +66,8 @@ if(!$startDate == "") {
 if(!$endDate == "") {
     $sql = $sql . $column_headers[$xaxis] . " < '" . $endDate . "'";
 }
-#$sql = "SELECT ". $column_headers[$xaxis] . ", " . $column_headers[$yaxis] . ", " . $column_headers[$auditor] . " FROM ada_data WHERE timeStamp < '2018-08-03' LIMIT 96";
-#$sql = "SELECT ". $column_headers[$xaxis] . ", " . $column_headers[$yaxis] . ", " . $column_headers[$auditor] . " FROM ada_data LIMIT 96"; 
+#$sql = "SELECT ". $column_headers[$xaxis] . ", " . $column_headers[$yaxis] . ", " . $column_headers[$auditor] . " FROM " . $tbl . " WHERE timeStamp < '2018-08-03' LIMIT 96";
+#$sql = "SELECT ". $column_headers[$xaxis] . ", " . $column_headers[$yaxis] . ", " . $column_headers[$auditor] . " FROM " . $tbl . " LIMIT 96"; 
 $result = $conn->query($sql);
 if ($result->num_rows > 0) { #create an array of data returned by the query
     while($row = $result->fetch_assoc()) {
