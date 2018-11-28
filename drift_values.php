@@ -4,96 +4,96 @@
 //mae is actually using root mean squared error
 $drift_details = [
 "temp"=>
-    "Temp = -1.62 * DOmg/L + 27.82
+    "Temp = -1.87 * DOmg/L + 30.67
     Predicting 0 if attribute value is missing.
-    Correlation coefficient                  0.6362
-    Mean absolute error                      5.2592
-    Root mean squared error                  7.399 
-    Relative absolute error                  61.0078 %
-    Root relative squared error              77.1524 %
-    Total Number of Instances                72492     
+    Correlation coefficient                  0.6757
+    Mean absolute error                      4.6943
+    Root mean squared error                  6.9128
+    Relative absolute error                  56.332  %
+    Root relative squared error              73.7218 %
+    Total Number of Instances                105078     
     Ignored Class Unknown Instances          121",
 "ph"=>
-    "pH = 0.02 * Dopct + 6.09
+    "pH = 0.02 * Dopct + 6.18
     Predicting 0 if attribute value is missing.
-    Correlation coefficient                  0.5365
-    Mean absolute error                      0.1726
-    Root mean squared error                  0.4007
-    Relative absolute error                  91.3061 %
-    Root relative squared error              84.3906 %
-    Total Number of Instances                65588     
-    Ignored Class Unknown Instances          7025",
+    Correlation coefficient                  0.5524
+    Mean absolute error                      0.1825
+    Root mean squared error                  0.3559
+    Relative absolute error                  85.3161 %
+    Root relative squared error              83.3566 %
+    Total Number of Instances                98174     
+    Ignored Class Unknown Instances          7025  ",
 "phmv"=>"",
 "cond"=>
-    "Cond = 0.21 * temp + 6.71
+    "Cond = 0.25 * temp + 6.84
     Predicting 0 if attribute value is missing.
-    Correlation coefficient                  0.378 
-    Mean absolute error                      3.9599
-    Root mean squared error                  4.8821
-    Relative absolute error                  92.3209 %
-    Root relative squared error              92.5803 %
-    Total Number of Instances                67751     
+    Correlation coefficient                  0.4624
+    Mean absolute error                      3.661 
+    Root mean squared error                  4.5455
+    Relative absolute error                  86.0139 %
+    Root relative squared error              88.6675 %
+    Total Number of Instances                100337     
     Ignored Class Unknown Instances          4862",
 "dopct"=>
-    "18.39 * pH - 52.82
-    Predicting 98.11 if attribute value is missing.
-    Correlation coefficient                  0.5826
-    Mean absolute error                      8.9907
-    Root mean squared error                  13.1182
-    Relative absolute error                  78.1109 %
-    Root relative squared error              81.2721 %
-    Total Number of Instances                72492     
+    "DO % = 2.02 * DOmg/L + 67.44
+    Predicting 0 if attribute value is missing.
+    Correlation coefficient                  0.4463
+    Mean absolute error                      7.9748
+    Root mean squared error                  13.6297
+    Relative absolute error                  74.1407 %
+    Root relative squared error              89.487  %
+    Total Number of Instances                105078     
     Ignored Class Unknown Instances          121",
 "domgl"=>
-    "-0.25 * temp + 12.41
+    "DO mg/L = -0.24 * temp + 12.42
     Predicting 0 if attribute value is missing.
-    Correlation coefficient                  0.6379
-    Mean absolute error                      1.1029
-    Root mean squared error                  2.9   
-    Relative absolute error                  44.7194 %
-    Root relative squared error              77.0127 %
-    Total Number of Instances                72491     
+    Correlation coefficient                  0.6774
+    Mean absolute error                      1.0161
+    Root mean squared error                  2.494 
+    Relative absolute error                  43.6733 %
+    Root relative squared error              73.5632 %
+    Total Number of Instances                105077     
     Ignored Class Unknown Instances          122",
 "dogain"=>
     "no good data",
 "turb"=>
-    "-2.17 * cond + 55.25
+    "Turbidity = -2.22 * cond + 55.11
     Predicting 36.47 if attribute value is missing.
-    Correlation coefficient                  0.2228
-    Mean absolute error                      20.0854
-    Root mean squared error                  48.3358
-    Relative absolute error                  89.2917 %
-    Root relative squared error              97.4851 %
-    Total Number of Instances                72492     
+    Correlation coefficient                  0.2191
+    Mean absolute error                      18.6056
+    Root mean squared error                  49.5892
+    Relative absolute error                  87.1234 %
+    Root relative squared error              97.5686 %
+    Total Number of Instances                105078     
     Ignored Class Unknown Instances          121",
 "depth"=>
     "this is in meters
     
-    -0.02 * Dopct + 3.95
+    Depth = -0.02 * Dopct + 3.66
     Predicting 6.84 if attribute value is missing.
-    Correlation coefficient                  0.1641
-    Mean absolute error                      0.8612
-    Root mean squared error                  1.9026
-    Relative absolute error                  104.3978 %
-    Root relative squared error              98.6442 %
-    Total Number of Instances                72611     
+    Correlation coefficient                  0.1391
+    Mean absolute error                      0.7871
+    Root mean squared error                  2.0753
+    Relative absolute error                  103.3047 %
+    Root relative squared error              99.0273 %
+    Total Number of Instances                105197     
     Ignored Class Unknown Instances          2"
 ];
 
 $drift_variables = [
 "temp"=> [
-    "coeff"=>-1.62,
+    "coeff"=>-1.87,
     "x"=>"domgl",
-    "yi"=>27.82,
+    "yi"=>30.67,
     "miss"=>0,
-    "mae"=>7.399
+    "mae"=>6.9128
 ],
 "ph"=> [
     "coeff"=>0.02,
     "x"=>"dopct",
-    "yi"=>6.09,
+    "yi"=>6.18,
     "miss"=>0,
-    "mae"=>0.4007
+    "mae"=>0.3559
 ],
 "phmv"=>[
     "coeff"=>NULL,
@@ -103,25 +103,25 @@ $drift_variables = [
     "mae"=>NULL
 ],
 "cond"=>[
-    "coeff"=>0.21,
+    "coeff"=>0.25,
     "x"=>"temp",
-    "yi"=>6.71,
+    "yi"=>6.84,
     "miss"=>0,
-    "mae"=>4.8821
+    "mae"=>4.5455
 ],
 "dopct"=>[
-    "coeff"=>18.39,
-    "x"=>"ph",
-    "yi"=>-52.82,
-    "miss"=>98.11,
-    "mae"=>13.1182
+    "coeff"=>2.02,
+    "x"=>"domgl",
+    "yi"=>67.44,
+    "miss"=>0,
+    "mae"=>13.6297
 ],
 "domgl"=>[
-    "coeff"=>-0.25,
+    "coeff"=>-0.24,
     "x"=>"temp",
-    "yi"=>12.41,
+    "yi"=>12.42,
     "miss"=>0,
-    "mae"=>2.9
+    "mae"=>2.494
 ],
 "dogain"=>[
     "coeff"=>NULL,
@@ -131,11 +131,11 @@ $drift_variables = [
     "mae"=>NULL
 ],
 "turb"=>[
-    "coeff"=>-2.17,
+    "coeff"=>-2.22,
     "x"=>"cond",
-    "yi"=>55.25,
+    "yi"=>55.11,
     "miss"=>36.47,
-    "mae"=>48.3358
+    "mae"=>49.5892
 ],
 "depth"=>[
     "coeff"=>NULL,
