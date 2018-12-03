@@ -44,7 +44,7 @@ else { #retrieve value from dropdown
 }
 $yaxis = "timestamp"; #graph everything against time
 #retrieve requested data from database
-$sql = "SELECT ". $column_headers[$xaxis] . ", " . $column_headers[$yaxis] . " FROM ada_data";
+$sql = "SELECT ". $column_headers[$xaxis] . ", " . $column_headers[$yaxis] . " FROM " . $tbl;
 if(!$startDate == "" || !$endDate == "") {
     $sql = $sql . " WHERE ";
 }

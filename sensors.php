@@ -2,6 +2,8 @@
 #constants representing metadata about the sensors
 #maybe in the future this can populate from a metadata table in the database?
 
+$tbl = "ada_data";
+
 #list of sensors appreviations and full names
 $sensor_list = array(
     "temp"=>"Temperature",
@@ -56,4 +58,6 @@ $sensor_short_titles = array(
     "turb"=>"Turbidity",
     "depth"=>"Depth"
 );
+
+//include("sensors_hrecos.php");
 ?>

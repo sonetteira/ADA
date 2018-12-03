@@ -28,9 +28,9 @@ include('drift_values.php');
 $conn = OpenCon();
 $dataPoints = array();
 #retrieve data from the database
-$sql = "SELECT * FROM ada_data LIMIT 96"; #the most recent 24 hours of data
-#$sql = "SELECT * FROM ada_data WHERE timeStamp < '2018-08-24' LIMIT 96"; #example of bad data
-#$sql = "SELECT * FROM ada_data WHERE timeStamp < '2018-08-19' LIMIT 96"; #example of drifting data
+$sql = "SELECT * FROM " . $tbl . " LIMIT 96"; #the most recent 24 hours of data
+#$sql = "SELECT * FROM " . $tbl . " WHERE timeStamp < '2018-08-24' LIMIT 96"; #example of bad data
+#$sql = "SELECT * FROM " . $tbl . " WHERE timeStamp < '2018-08-19' LIMIT 96"; #example of drifting data
 $result = $conn->query($sql);
 if ($result->num_rows > 0) { #create an array of data returned by the query
     $i = 0;
