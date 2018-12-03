@@ -2,7 +2,6 @@
 <style>
 .invisible {visibility: hidden;}
 table {display:inline;}
-.right {float:right;}
 #statsContainerR {display: inline; float: right;}
 #statsContainer {display: inline;}
 </style>
