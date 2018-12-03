@@ -59,5 +59,5 @@ $sensor_short_titles = array(
     "depth"=>"Depth"
 );
 
-include("sensors_hrecos.php");
+//include("sensors_hrecos.php");
 ?>
