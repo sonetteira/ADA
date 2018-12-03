@@ -18,7 +18,7 @@ function error_check($data, $checks) {
                 if($sensors[$sensor] == "bad" || $sensors[$sensor] == "flag") { #this sensor has already been flagged
                     continue;
                 }
-                if($datum == $checks[$sensor]["error"]) #sensor is returning an error code
+                if($datum == $checks[$sensor]["error"] || is_null($datum)) #sensor is returning an error code
                 {
                     $sensors[$sensor] = array("bad", $datum, $t);
                 }
