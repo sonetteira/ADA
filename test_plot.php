@@ -6,12 +6,12 @@ table {display:inline;}
 #statsContainer {display: inline;}
 </style>
 <?php
-require('../dbconn.php');
+require("../_config/db_conn.php");
 include('sensors.php');
 include('functions.php');
 include('analyses.php');
 include('error_values.php');
-$conn = OpenCon();
+$conn = createConnection();
 $dataPoints = [];
 $lin_regL = [];
 $lin_regR = [];
@@ -81,13 +81,13 @@ if(!$startDate == "" || !$endDate == "") {
     $sql = $sql . " WHERE ";
 }
 if(!$startDate == "") {
-    $sql = $sql . "timeStamp > '" . $startDate . "'";
+    $sql = $sql . " " . $column_headers[$xaxis] . " > '" . $startDate . "'";
     if(!$endDate == "") {
         $sql = $sql . " AND ";
     }
 }
 if(!$endDate == "") {
-    $sql = $sql . "timeStamp < '" . $endDate . "'";
+    $sql = $sql . " " . $column_headers[$xaxis] . " < '" . $endDate . "'";
 }
 $result = $conn->query($sql);
 if ($result->num_rows > 0) {
@@ -186,7 +186,7 @@ if ($result->num_rows > 0) {
     $statsR = calculate_stats($xR, $yR);
 }
 else {print("There is no data for this time range.");}
-CloseCon($conn);
+closeConnection($conn);
 if($startDate == "") {
     $startDate = explode(" ", $dataL[count($dataL)-1][$xaxis])[0];
 }

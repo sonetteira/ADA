@@ -20,11 +20,11 @@ span{display: inline-block;
 </style>
 <?php
 //Going to need to add a query and dropdown for selecting deployment
-require('../dbconn.php');
+require("../_config/db_conn.php");
 include('sensors.php');
 include('functions.php');
 include('error_values.php');
-$conn = OpenCon();
+$conn = createConnection();
 $dataPoints = array();
 $showsensors = [
     "temp"=>"Temperature",
@@ -58,7 +58,7 @@ if ($result->num_rows > 0) { #create an array of data returned by the query
     }
 }
 else {echo "No data";}
-CloseCon($conn);
+closeConnection($conn);
 $i=0;
 ?>
 </head>

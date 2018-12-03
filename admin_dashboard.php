@@ -20,12 +20,12 @@ img {height: 30px;
     text-align: center;}
 </style>
 <?php
-require('../dbconn.php');
+require("../_config/db_conn.php");
 include('sensors.php');
 include('functions.php');
 include('error_values.php');
 include('drift_values.php');
-$conn = OpenCon();
+$conn = createConnection();
 $dataPoints = array();
 #retrieve data from the database
 $sql = "SELECT * FROM " . $tbl . " LIMIT 96"; #the most recent 24 hours of data
@@ -47,7 +47,7 @@ if ($result->num_rows > 0) { #create an array of data returned by the query
     $drift = detect_drift(clean_data($dataPoints, $checks), $drift_variables);
 }
 else {echo "No data";}
-CloseCon($conn);
+closeConnection($conn);
 ?>
 </head>
 <body>

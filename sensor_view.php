@@ -21,12 +21,12 @@ p {text-align: center;}
 </style>
 <?php 
 /* Page to show validity and drift for the past 24 hours for a given sensor */
-require('../dbconn.php');
+require("../_config/db_conn.php");
 include('sensors.php');
 include('functions.php');
 include('error_values.php');
 include('drift_values.php');
-$conn = OpenCon();
+$conn = createConnection();
 $startDate = "";
 $endDate = "";
 $yaxis = 'dopct';
@@ -123,7 +123,7 @@ if($startDate == "") {
 if($endDate == "") {
     $endDate = explode(" ", $dataPoints[0][$xaxis])[0];
 }
-CloseCon($conn);
+closeConnection($conn);
 ?>
 <form method="post"><table class="right">
     <tr><td>Start Date</td><td>End Date</td></tr>

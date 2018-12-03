@@ -1,9 +1,9 @@
 <?php
-require('../dbconn.php');
+require("../_config/db_conn.php");
 include('sensors.php');
 include('functions.php');
 include('error_values.php');
-$conn = OpenCon();
+$conn = createConnection();
 $checklist = [];
 foreach($sensor_list as $sensor => $name) {
     if($sensor == "dogain") {continue;}
@@ -58,7 +58,7 @@ if ($result->num_rows > 0) {
         }
     }
 }
-CloseCon($conn);
+closeConnection($conn);
 $k = 0;
 ?>
 <!-- Plotly.js -->

@@ -3,12 +3,12 @@
 .invisible {display: none;}
 </style>
 <?php
-require('../dbconn.php');
+require("../_config/db_conn.php");
 include('sensors.php');
 include('functions.php');
 include('analyses.php');
 include('error_values.php');
-$conn = OpenCon();
+$conn = createConnection();
 $dataPoints = [];
 $lin_reg = [];
 $x = [];
@@ -49,13 +49,13 @@ if(!$startDate == "" || !$endDate == "") {
     $sql = $sql . " WHERE ";
 }
 if(!$startDate == "") {
-    $sql = $sql . "timeStamp > '" . $startDate . "'";
+    $sql = $sql . " " . $column_headers[$yaxis] . " > '" . $startDate . "'";
     if(!$endDate == "") {
         $sql = $sql . " AND ";
     }
 }
 if(!$endDate == "") {
-    $sql = $sql . "timeStamp < '" . $endDate . "'";
+    $sql = $sql . " " . $column_headers[$yaxis] . " < '" . $endDate . "'";
 }
 $result = $conn->query($sql);
 if ($result->num_rows > 0) {
@@ -108,7 +108,7 @@ if ($result->num_rows > 0) {
     $stats = calculate_stats($x, $y);
 }
 else {print("There is no data for this time range.");}
-CloseCon($conn);
+closeConnection($conn);
 if($startDate == "") {
     $startDate = explode(" ", $data[count($data)-1][$yaxis])[0];
 }
