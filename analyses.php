@@ -17,12 +17,12 @@ $sensor_analyses = [
         "dtr" => 
             ["title" => "Daily pH Range", "units" => $units["ph"], "function" => "DTR", "short_title" => "daily pH range"]
     ],
-    /*"phmv"=>[
+    "phmv"=>[
         "avg" =>
             ["title" => "Daily Average pH mv", "units" => $units["phmv"], "function" => "daily_average", "short_title" => "average pH mv"],
         "dtr" => 
             ["title" => "Daily pH mv Range", "units" => $units["phmv"], "function" => "DTR", "short_title" => "daily pH mv range"]
-    ],*/
+    ],
     "cond"=>[
         "avg" =>
             ["title" => "Daily Average Conductivity", "units" => $units["cond"], "function" => "daily_average", "short_title" => "average cond"],
