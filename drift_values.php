@@ -23,7 +23,11 @@ $drift_details = [
     Root relative squared error              83.3566 %
     Total Number of Instances                98174     
     Ignored Class Unknown Instances          7025  ",
-"phmv"=>"",
+"phmv"=>
+    "phmv = (-400/7)ph + 400
+    Predicting 0 if attribute value is missing.
+    Accepted error rate: 10%
+    This is a literal relationship.",
 "cond"=>
     "Cond = 0.25 * temp + 6.84
     Predicting 0 if attribute value is missing.
@@ -96,11 +100,11 @@ $drift_variables = [
     "mae"=>0.3559
 ],
 "phmv"=>[
-    "coeff"=>NULL,
-    "x"=>NULL,
-    "yi"=>NULL,
-    "miss"=>NULL,
-    "mae"=>NULL
+    "coeff"=>(-400/7),
+    "x"=>"ph",
+    "yi"=>400,
+    "miss"=>0,
+    "mae"=>80
 ],
 "cond"=>[
     "coeff"=>0.25,
