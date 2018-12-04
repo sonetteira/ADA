@@ -58,6 +58,4 @@ $sensor_short_titles = array(
     "turb"=>"Turbidity",
     "depth"=>"Depth"
 );
-
-//include("sensors_hrecos.php");
 ?>
