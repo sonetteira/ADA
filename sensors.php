@@ -2,7 +2,7 @@
 #constants representing metadata about the sensors
 #maybe in the future this can populate from a metadata table in the database?
 
-$tbl = "niceview";
+$tbl = "NiceView";
 
 #list of sensors appreviations and full names
 $sensor_list = array(
